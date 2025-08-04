@@ -30,4 +30,30 @@ router.get("/", async (req, res) => {
    }
 })
 
+router.put("/:id", async (req, res) => {
+   try {
+      const { id } = req.params;
+      const {name, password} = req.body;
+
+      if (!name || !password) {
+         return res.status(400).json({ error: "Name and password are required" });
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(
+         id, 
+         { name, password },
+         { new: true }
+
+
+      )
+      if (!updatedUser) {
+         return res.status(404).json({ error: "User not found" });
+      }
+   }
+   catch (error) {
+      console.error("error updating user:", error);
+      res.status(500).json({ error: "Internal server error" });
+   }     
+})
+
 module.exports = router;
