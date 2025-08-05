@@ -19,14 +19,22 @@ router.post("/", async (req, res) => {
    }
 })
 
-router.get("/", async (req, res) => {
+
+router.delete("/:id", async (req, res) => {
    try {
-      const users = await User.find();
-      res.status(200).json(users);
+      const { id } = req.params;
+      const deletedUser = await User.findByIdAndDelete(id);
+   
+      
+      if (!deletedUser) {
+         return res.status(404).json({ error: "User not found" });
+      }
+
+         res.status(200).json({ message: "User deleted successfully" });
    }
    catch (error) {
-      console.error("error fetching users:", error);
-      res.status(500).json({ error: "Internal server error" });   
+      console.error("error deleting user:", error);
+      res.status(500).json({ error: "Internal server error" });
    }
 })
 
@@ -57,21 +65,14 @@ router.put("/:id", async (req, res) => {
    }     
 })
 
-router.delete("/:id", async (req, res) => {
+router.get("/", async (req, res) => {
    try {
-      const { id } = req.params;
-      const deletedUser = await User.findByIdAndDelete(id);
-   
-      
-      if (!deletedUser) {
-         return res.status(404).json({ error: "User not found" });
-      }
-
-         res.status(200).json({ message: "User deleted successfully" });
+      const users = await User.find();
+      res.status(200).json(users);
    }
    catch (error) {
-      console.error("error deleting user:", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error("error fetching users:", error);
+      res.status(500).json({ error: "Internal server error" });   
    }
 })
 
