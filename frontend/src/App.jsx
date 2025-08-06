@@ -1,6 +1,5 @@
 import React from 'react';
-import Messenger from './messenger';
-import SignUp from './users/signup';
+import Messenger from './messenger';g
 
   function App() {
     
