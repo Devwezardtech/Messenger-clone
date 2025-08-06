@@ -1,64 +1,65 @@
-/*import express from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
-
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose")
+const User = require("../models/User")
 const router = express.Router();
 
-// Register route
-router.post("/register", async (req, res) => {
-   const { name, email, password } = req.body;
-
+router.post("/", async (req, res) => {
    try {
-      const existingUser = await User.findOne({ email });
-      if (existingUser) return res.status(400).json({ message: "User already exists" });
+      const { name, password } = req.body;
+      if (!name || !password) {
+         return res.status(400).json({ error: "Name and password are required" });
+      }
 
-      //const hashedPassword = await bcrypt.hash(password, 10);
+      const existingUser = await User.findOne({ name });
+      if (existingUser) {
+         return res.status(400).json({ error: "User alrady exists" });
+      }
 
-      const newUser = await User.create({ name, email, password: hashedPassword });
-      res.status(201).json({ message: "User registered successfully" });
-   } catch (err) {
-      res.status(500).json({ error: err.message });
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newUser = await User.create({ name, password: hashedPassword });
+      res.status(201).json({ message: "User reqestered sucessfully", user: newUser });
    }
-});
+   catch (error) {
+      console.error("Error registering user:", error);
+      res.status(500).json({ error: "Internal server error" });
+   }
+})
 
-// Login route
-router.post("/login", async (req, res) => {
-   const { email, password } = req.body;
-
+router.post("/login", async(req, res) => {
    try {
-      const user = await User.findOne({ email });
-      if (!user) return res.status(404).json({ message: "User not found" });
+      const { name, password } = req.body;
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+      if(!name || !password) {
+         return res.status(400).json({ message: "please fill out"})
+      }
 
-      const token = jwt.sign(
-         { userId: user._id, role: user.role },
-         process.env.JWT_SECRET,
-         { expiresIn: "1y" }
-      );
+      const user = await User.findOne({ name });
+      if (!user) {
+         return res.status(400).json({ message: "Account does not exist"})
+      }
 
-      res.json({ token, user: { name: user.name, email: user.email, role: user.role } });
-   } catch (err) {
-      res.status(500).json({ error: err.message });
+      const isMatch = password.compare({password, password: hashedPassword})
+      if (!isMatch) {
+         return res.status(400).json({ message: "Invalid Credintial"})
+      }
+
+      const token = jwt.sign({ userId: user._id, name: user.name }, process.env.JWT_SECRET, {
+         expiresIn: "7d",
+      })
+
+      res.status(200).json({
+         message: "Login Successful", token, user: { id: user._id, name: user.name,
+         },
+      });
+      
    }
-});
-
-// Protected Route
-router.get("/me", (req, res) => {
-   const token = req.headers.authorization?.split(" ")[1];
-   if (!token) return res.status(401).json({ message: "Unauthorized" });
-
-   try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      res.json({ message: "Access granted", userId: decoded.userId });
-   } catch {
-      res.status(401).json({ message: "Invalid token" });
+   catch (error) {
+      console.error("Login error", error);
+      return res.status(500).json({ message: "enternal issue", error});
    }
-});
+})
 
-export default router;
-
-
-*/
+module.exports = router;
