@@ -2,9 +2,12 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose")
-const User = require("../models/User")
-const router = express.Router();
+const User = require("../models/User");
+const { config } = require("dotenv");
+const router = express.Router(); 
 
+
+//register
 router.post("/", async (req, res) => {
    try {
       const { name, password } = req.body;
@@ -28,6 +31,7 @@ router.post("/", async (req, res) => {
    }
 })
 
+//login
 router.post("/login", async(req, res) => {
    try {
       const { name, password } = req.body;
@@ -41,7 +45,7 @@ router.post("/login", async(req, res) => {
          return res.status(400).json({ message: "Account does not exist"})
       }
 
-      const isMatch = password.compare({password, password: hashedPassword})
+      const isMatch = await bcrypt.compare(password, user.password)
       if (!isMatch) {
          return res.status(400).json({ message: "Invalid Credintial"})
       }
@@ -61,5 +65,32 @@ router.post("/login", async(req, res) => {
       return res.status(500).json({ message: "enternal issue", error});
    }
 })
+
+//validate with auth
+router.get("/me", async (req, res ) => {
+   try{
+      const authHeader = req.header.authorization;
+
+      if (!authHeader || !authHeader ) {
+         return res.status(400).json({ message: "no token found"});
+      }
+
+      const token = authHeader.split(" ")[1];
+      const decoded = token.verify( token, process.eventNames.JWT_SECRET )
+
+      res.status(200).json({
+         message: "authorized", 
+         user: {
+            id: decoded.userId,
+            name: decoded.name
+         }
+      })
+
+   }
+   catch (error) {
+      return res.status(500).json({ message: "Internal server error", error });
+   }
+})
+
 
 module.exports = router;

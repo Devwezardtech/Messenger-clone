@@ -6,10 +6,12 @@ import SignUp from './users/signup';
   function Messenger() {
     
   return (
-    <div className="flex-col  min-h-screen bg-blue-500 text-white flex items-center justify-center">
-      { /*<Crud /> */}
-      <Login />
+    <div className="flex-col  min-h-screen flex items-center justify-center">
+      { /*<Crud />
       <SignUp />
+       */}
+      <Login />
+      
      
     </div>
   );

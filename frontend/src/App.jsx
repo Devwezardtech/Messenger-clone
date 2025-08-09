@@ -1,12 +1,24 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Messenger from './messenger';
+import User from './users/user';
+import SignUp from './users/signup';
+import Login from './users/login';
+import UserMessage from './users/usermessage';
 
   function App() {
     
   return (
-    <div className="flex-col  min-h-screen bg-blue-500 text-white flex items-center justify-center">
-     <Messenger />
-    </div>
+   
+     <BrowserRouter>
+     <Routes>
+      <Route path='/' element={ <Messenger />} />
+      <Route path='/user' element={ <User />} />
+      <Route path='/signup' element={ <SignUp />} />
+      <Route path='/login' element={ <Login />} />
+      <Route path='/usermessage' element={ <UserMessage />} />
+     </Routes>
+     </BrowserRouter>
   );
 }
 
