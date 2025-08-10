@@ -27,7 +27,7 @@ const handleSubmit = async (e) => {
    e.preventDefault();
 
    try{
-      const response = await axios.post("http://localhost:5000/api/", { name, password })
+      const response = await axios.post("http://localhost:5000/api/register", { name, password })
       console.log("Data submitted", response.data)
       Setname("")
       Setpassword("")

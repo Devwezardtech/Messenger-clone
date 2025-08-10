@@ -16,7 +16,7 @@ import UserMessage from './users/usermessage';
       <Route path='/user' element={ <User />} />
       <Route path='/signup' element={ <SignUp />} />
       <Route path='/login' element={ <Login />} />
-      <Route path='/usermessage' element={ <UserMessage />} />
+      <Route path='/user/:id' element={ <UserMessage />} />
      </Routes>
      </BrowserRouter>
   );

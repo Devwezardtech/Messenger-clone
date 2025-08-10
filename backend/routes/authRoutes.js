@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 //register
-router.post("/", async (req, res) => {
+router.post("/register", async (req, res) => {
    try {
       const { name, password } = req.body;
       if (!name || !password) {
@@ -67,30 +67,74 @@ router.post("/login", async(req, res) => {
 })
 
 //validate with auth
-router.get("/me", async (req, res ) => {
-   try{
-      const authHeader = req.header.authorization;
+router.get("/me", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ message: "No token found" });
+    }
 
-      if (!authHeader || !authHeader ) {
-         return res.status(400).json({ message: "no token found"});
-      }
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      const token = authHeader.split(" ")[1];
-      const decoded = token.verify( token, process.eventNames.JWT_SECRET )
+    res.status(200).json({
+      message: "Authorized",
+      user: {
+        id: decoded.userId,
+        name: decoded.name,
+      },
+    });
+  } catch (error) {
+    console.error("Authorization error:", error);
+    return res.status(401).json({ message: "Invalid token", error });
+  }
+});
 
-      res.status(200).json({
-         message: "authorized", 
-         user: {
-            id: decoded.userId,
-            name: decoded.name
-         }
-      })
 
-   }
-   catch (error) {
-      return res.status(500).json({ message: "Internal server error", error });
-   }
-})
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
+router.get("/users/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Check if ID is a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: "Invalid user ID format" });
+        }
+
+        // Find user by ID
+        const user = await User.findById(id).select("-password"); // exclude password
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json(user);
+
+    } catch (error) {
+        console.error("Error fetching user:", error.message);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

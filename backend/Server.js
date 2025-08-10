@@ -5,9 +5,8 @@ const path = require("path");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
-//const userRoutes = require("./routes/userRoutes");
-
-
+const userRoutes = require("./routes/userRoutes");
+const  messageRoutes = require("./routes/message");
 
 const app = express();
 
@@ -17,8 +16,9 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
-//app.use("/api/user", userRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api", authRoutes);
+app.use("/api/message", messageRoutes);
 
 
 // Connect to MongoDB
