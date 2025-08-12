@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Messenger from './messenger';
 import User from './users/user';
 import SignUp from './users/signup';
@@ -10,7 +10,6 @@ import UserMessage from './users/usermessage';
     
   return (
    
-     <BrowserRouter>
      <Routes>
       <Route path='/' element={ <Messenger />} />
       <Route path='/user' element={ <User />} />
@@ -18,7 +17,6 @@ import UserMessage from './users/usermessage';
       <Route path='/login' element={ <Login />} />
       <Route path='/user/:id' element={ <UserMessage />} />
      </Routes>
-     </BrowserRouter>
   );
 }
 

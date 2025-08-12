@@ -1,54 +1,48 @@
 const express = require("express");
 const Message = require("../models/Message");
+const auth = require("../middleware/auth");
 const router = express.Router();
 
-// POST: send a message
-router.post("/usermessages/:id", async (req, res) => {
+
+// POST: send a message (secure)
+router.post("/:receiverId", auth, async (req, res) => {
   try {
-    const { message, senderId } = req.body;
-    const receiverId = req.params.id;
+    const { message } = req.body;
+    const { receiverId } = req.params;
 
-     console.log("Received POST to send message:", { message, senderId, receiverId });
-
-    if (!message || !senderId || !receiverId) {
-      return res.status(400).json({ message: "Missing required fields" });
+    if (!receiverId || !message) {
+      return res.status(400).json({ message: "Receiver ID and message are required" });
     }
 
-    const sentMessage = await Message.create({
-      message,
-      senderId,
+    const newMessage = await Message.create({
+      senderId: req.user.userId, // from token
       receiverId,
+      message
     });
 
-    console.log("Message saved:", sentMessage);
-    
-    res.status(200).json(sentMessage);
-  } catch (error) {
-    console.error("Error sending message:", error);
+    res.status(201).json(newMessage);
+  } catch (err) {
+    console.error("Error sending message:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// GET: all messages between two users
-router.get("/usermessages/:id", async (req, res) => {
+// GET: messages between logged-in user and another user (secure)
+router.get("/:otherUserId", auth, async (req, res) => {
   try {
-    const currentUserId = req.query.currentUserId;
-    const otherUserId = req.params.id;
-
-    if (!currentUserId || !otherUserId) {
-      return res.status(400).json({ message: "Missing user IDs" });
-    }
+    const currentUserId = req.user.userId;
+    const { otherUserId } = req.params;
 
     const messages = await Message.find({
       $or: [
         { senderId: currentUserId, receiverId: otherUserId },
-        { senderId: otherUserId, receiverId: currentUserId },
-      ],
+        { senderId: otherUserId, receiverId: currentUserId }
+      ]
     }).sort({ createdAt: 1 });
 
     res.status(200).json(messages);
-  } catch (error) {
-    console.error("Error fetching messages:", error);
+  } catch (err) {
+    console.error("Error fetching messages:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });

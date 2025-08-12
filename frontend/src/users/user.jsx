@@ -1,28 +1,34 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Navbar from "../components/Navbar";
 
 const User = () => {
-  const [users, setUsers] = useState([]); // will hold API data
+  const [allusers, setAllUsers] = useState([]); // will hold API data
+  const [recentUsers, setRecentUsers] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/user");
-        setUsers(res.data);
-      } catch (err) {
-        console.error("Error fetching users", err);
-      }
-    };
+  const token = localStorage.getItem("token");
 
-    fetchUsers();
-  }, []);
+ // Fetch all users (for search)
+useEffect(() => {
+  axios.get("http://localhost:5000/api/user", {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => setAllUsers(res.data));
+}, [token]);
+
+// Fetch recent chats
+useEffect(() => {
+  axios.get("http://localhost:5000/api/user/recent", {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => setRecentUsers(res.data));
+}, [token]);
 
   const goToUser = (user) => navigate(`/user/${user._id}`);
 
   return (
     <div className="p-1 w-full max-w-md mx-8">
+      <Navbar />
       {/* HEADER */}
       <div className="sticky top-0 bg-white z-10 flex justify-between items-center py-2 border-b">
         <h3 className="text-lg">Messenger</h3>
@@ -50,7 +56,7 @@ const User = () => {
       {/* HORIZONTAL SCROLL LIST */}
       <div className="overflow-x-auto scrollbar-hide">
         <div className="inline-flex space-x-6 px-2">
-          {users.map((user) => (
+          {allusers.map((user) => (
   <button key={user._id} onClick={() => goToUser(user)}
               className="flex-shrink-0 min-w-[88px] flex flex-col items-center cursor-pointer bg-transparent border-0"
             >
@@ -67,7 +73,7 @@ const User = () => {
 
       {/* VERTICAL LIST */}
       <div className="mt-6 space-y-2">
-        {users.map((user) => (
+        {recentUsers.map((user) => (
   <div key={user._id} onClick={() => goToUser(user)}
             className="flex items-center gap-3 p-2 cursor-pointer"
           >
