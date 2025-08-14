@@ -12,12 +12,28 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isOnline, setIsOnline] = useState(false);
+  const [lastSeen, setLastSeen] = useState(null); // NEW
 
   const socketRef = useRef(null);
   const messagesRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
   const myId = me?.id;
+
+  // Helper: Convert date to "time ago"
+  function timeAgo(date) {
+    if (!date) return "";
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (seconds < 60) return "just now";
+    if (minutes < 60) return `${minutes} min ago`;
+    if (hours < 24) return `${hours} hrs ago`;
+    return `${days} days ago`;
+  }
 
   // Fetch other user info
   useEffect(() => {
@@ -28,6 +44,7 @@ export default function Chat() {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setOther(res.data);
+        setLastSeen(res.data.lastOnline || null); // NEW
       } catch (err) {
         console.error(err);
       }
@@ -116,6 +133,15 @@ export default function Chat() {
       }
     });
 
+    // Online users listener
+    socketRef.current.on("onlineUsers", (users) => {
+      if (users.includes(otherUserId)) {
+        setIsOnline(true);
+      } else {
+        setIsOnline(false);
+      }
+    });
+
     return () => {
       socketRef.current.disconnect();
     };
@@ -165,15 +191,26 @@ export default function Chat() {
       <div className="p-4 max-w-md mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <img
-            src={other?.avatar || "/default-avatar.png"}
-            alt={other?.name}
-            className="w-12 h-12 rounded-full border"
-          />
+          <div className="relative">
+            <img
+              src={other?.avatar || "/default-avatar.png"}
+              alt={other?.name}
+              className="w-12 h-12 rounded-full border"
+            />
+            {isOnline && (
+              <span className="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 rounded-full border border-white"></span>
+            )}
+          </div>
           <div>
             <div className="font-medium">{other?.name || "Loading..."}</div>
             <div className="text-sm text-gray-500">
-              {isTyping ? "Typing..." : "One-on-one chat"}
+              {isTyping
+                ? "Typing..."
+                : isOnline
+                ? "Online"
+                : lastSeen
+                ? `Last seen ${timeAgo(lastSeen)}`
+                : "Offline"}
             </div>
           </div>
         </div>
