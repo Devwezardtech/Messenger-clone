@@ -1,82 +1,34 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"
-import User from "./user";
+import { useNavigate, Link } from "react-router-dom";
 
+export default function Login( { onLogin } ) {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-const Login = () => {
-   const [name, Setname] = useState("");
-   const [password, Setpassword] = useState("");
-   
+   const submit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", { name, password });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (onLogin) onLogin();
+      navigate("/users");
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed");
+    }
+  };
 
-   const navigate = useNavigate();
-   
-const handleSubmit = async (e) => {
-   e.preventDefault();
-
-   try{
-      console.log( { name, password });
-      const response = await axios.post("http://localhost:5000/api/login", { name, password })
-   if (response?.data?.user) {
-  navigate("/user");
-} else {
-  navigate("/unauthorized");
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <form onSubmit={submit} className="p-6 border rounded max-w-md w-full">
+        <h2 className="text-xl font-semibold mb-4">Login</h2>
+        <input value={name} onChange={e => setName(e.target.value)} placeholder="Name" className="w-full mb-2 border px-3 py-2 rounded" />
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" className="w-full mb-4 border px-3 py-2 rounded" />
+        <button className="w-full bg-blue-600 text-white py-2 rounded">Login</button>
+        <p className="mt-3">No account? <Link to="/register" className="text-blue-600">Register</Link></p>
+      </form>
+    </div>
+  );
 }
-
-   }
-   catch(err){
-      console.error("no data:", err.message)
-   }
-}
-
-const signUp = () => {
-   navigate("/signup")
-}
-
-const back =() => {
-   navigate("/signup")
-}
-      
-   return (
-      <div>
-         <button className="flex px-8 pt-4" onClick={back}>X</button>
-      <div className="flex justify-center item-center p-16">
-         
-         <div >
-            <div className="flex justify-center item-center">
-         <h1 className="text-lg p-8">Login</h1>
-         </div>
-         
-
-         <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-2 justify-center items-center">
-               <input className="text-black p-1 rounded border border-gray-400" type="text" placeholder="name" value={name} onChange={(e) => Setname(e.target.value)} required />
-
-               <input className="text-black p-1 rounded border border-gray-400" type="password" placeholder="password" value={ password } onChange={(e) => Setpassword(e.target.value)} required />
-
-               <button className="bg-green-400 w-20 text-white rounded" type="submit">Submit</button> 
-
-               <button className="py-4">Forgot password?</button>
-            </div>
-            
-
-            
-            
-         </form>
-         
-
-<div className="flex">
-   <h5>already have an account? </h5>
-         <button className="bg-green-100 rounded-md px-2 mx-1 w-20" onClick={signUp}> SignUp</button>
- </div>
-     </div>
-      </div>
-      </div>
-   )
-
-
-
-}
-
-export default Login;

@@ -1,4 +1,4 @@
-import React from "react";
+/*import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -131,7 +131,6 @@ const handleSubmit = async (e) => {
             </tbody>
          </table>
 
-         {/* Only show update form if a user is selected */}
          {selectedUserId && (
             <div className="mt-6 text-back">
                <h2>Update User</h2>
@@ -169,3 +168,5 @@ const handleSubmit = async (e) => {
 }
 
 export default Crud;
+
+*/

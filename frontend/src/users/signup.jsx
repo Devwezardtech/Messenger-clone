@@ -1,81 +1,32 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
-const SignUp = () => {
-   const [name, Setname] = useState("");
-   const [password, Setpassword] = useState("");
+export default function Register() {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-   const navigate = useNavigate();
+  const submit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:5000/api/auth/register", { name, password });
+      alert("Registered. Please login.");
+      navigate("/login");
+    } catch (err) {
+      alert(err.response?.data?.message || "Error registering");
+    }
+  };
 
-    useEffect(() => {
-         const fetchUsers = async () => {
-            try {
-               const response = await axios.get("http://localhost:5000/api/auth");
-               setUsers(response.data);
-               
-            } catch (error) {
-               console.error("Error fetching users:", error);
-            }
-         };
-   
-         fetchUsers();
-      }, []);
-   
-const handleSubmit = async (e) => {
-   e.preventDefault();
-
-   try{
-      const response = await axios.post("http://localhost:5000/api/register", { name, password })
-      console.log("Data submitted", response.data)
-      Setname("")
-      Setpassword("")
-   }
-   catch(err){
-      console.error("no data:", err.message)
-   }
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <form onSubmit={submit} className="p-6 border rounded max-w-md w-full">
+        <h2 className="text-xl font-semibold mb-4">Register</h2>
+        <input value={name} onChange={e => setName(e.target.value)} placeholder="Name" className="w-full mb-2 border px-3 py-2 rounded" />
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" className="w-full mb-4 border px-3 py-2 rounded" />
+        <button className="w-full bg-blue-600 text-white py-2 rounded">Register</button>
+        <p className="mt-3">Have an account? <Link to="/login" className="text-blue-600">Login</Link></p>
+      </form>
+    </div>
+  );
 }
-
-const login = () => {
-   navigate("/login");
-}
-
-const back =() => {
-   navigate("/login")
-}
-      
-   return (
-      <div>
-         <button className="flex px-8 pt-4" onClick={back}>X</button>
-      <div className="flex justify-center item-center p-16">
-         <div >
-            <div className="flex justify-center item-center">
-         <h1 className="text-lg p-8">Regester</h1>
-         </div>
-         
-
-         <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-2 justify-center items-center">
-               <input className="text-black p-1 rounded border border-gray-400" type="text" placeholder="name" value={name} onChange={(e) => Setname(e.target.value)} required />
-
-               <input className="text-black p-1 rounded border border-gray-400" type="password" placeholder="password" value={ password } onChange={(e) => Setpassword(e.target.value)} required />
-
-               <button className="bg-green-400 w-20 text-white rounded" type="submit">Submit</button> 
-            </div>
-         </form>
-
-<div className="flex">
-   <h5>already have an account? </h5>
-         <button className="bg-green-100 rounded-md px-2 mx-1 w-20" onClick={login}>  login</button>
- </div>
-     </div>
-      </div>
-      </div>
-   )
-
-
-
-}
-
-export default SignUp;

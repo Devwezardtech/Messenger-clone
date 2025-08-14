@@ -1,97 +1,126 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
+import { Link, useNavigate } from "react-router-dom";
 
-const User = () => {
-  const [allusers, setAllUsers] = useState([]); // will hold API data
-  const [recentUsers, setRecentUsers] = useState([]);
+export default function Users() {
+  const [users, setUsers] = useState([]);
+  const [lastMessages, setLastMessages] = useState({});
+  const token = localStorage.getItem("token");
+  const me = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
+  useEffect(() => {
+    const fetchUsersAndLast = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/user", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
- // Fetch all users (for search)
-useEffect(() => {
-  axios.get("http://localhost:5000/api/user", {
-    headers: { Authorization: `Bearer ${token}` }
-  }).then(res => setAllUsers(res.data));
-}, [token]);
+        const filtered = res.data.filter((u) => u._id !== me.id);
+        setUsers(filtered);
 
-// Fetch recent chats
-useEffect(() => {
-  axios.get("http://localhost:5000/api/user/recent", {
-    headers: { Authorization: `Bearer ${token}` }
-  }).then(res => setRecentUsers(res.data));
-}, [token]);
+        await Promise.all(
+          filtered.map(async (u) => {
+            try {
+              const msgRes = await axios.get(
+                `http://localhost:5000/api/message/conversation/${u._id}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
 
-  const goToUser = (user) => navigate(`/user/${user._id}`);
+              const msgs = msgRes.data || [];
+              const last = msgs.length > 0 ? msgs[msgs.length - 1] : null;
+
+              setLastMessages((prev) => ({
+                ...prev,
+                [u._id]: last,
+              }));
+            } catch (err) {
+              console.error("Error fetching messages for", u._id, err);
+              setLastMessages((prev) => ({ ...prev, [u._id]: null }));
+            }
+          })
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchUsersAndLast();
+  }, [token, me]);
+
+  const isUnread = (uId) => {
+    const last = lastMessages[uId];
+    if (!last) return false;
+    return last.senderId !== me.id && last.seen === false;
+  };
+
+  const handleOpenChat = async (uId, last) => {
+  // Optimistically mark as seen in UI
+  if (last && last.senderId !== me.id && !last.seen) {
+    setLastMessages(prev => ({
+      ...prev,
+      [uId]: { ...last, seen: true }
+    }));
+  }
+
+  try {
+    await axios.put(
+      `http://localhost:5000/api/message/mark-seen/${uId}`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+  } catch (err) {
+    console.error("Error marking messages seen:", err);
+  }
+
+  navigate(`/chat/${uId}`);
+};
+
 
   return (
-    <div className="p-1 w-full max-w-md mx-8">
+    <div className="min-h-screen">
       <Navbar />
-      {/* HEADER */}
-      <div className="sticky top-0 bg-white z-10 flex justify-between items-center py-2 border-b">
-        <h3 className="text-lg">Messenger</h3>
-        <div>
-          <button className="mx-5">***</button>
-          <button className="mx-4">***</button>
+      <div className="p-4 max-w-2xl mx-auto">
+        <h2 className="text-lg font-semibold mb-4">People</h2>
+
+        <div className="grid grid-cols-1 gap-3">
+          {users.map((u) => {
+            const last = lastMessages[u._id];
+            const unread = isUnread(u._id);
+
+            const preview = last
+              ? last.text.length > 50
+                ? last.text.slice(0, 47) + "..."
+                : last.text
+              : "Say hi!";
+
+            return (
+              <div
+                key={u._id}
+                onClick={() => handleOpenChat(u._id, last)}
+                className="cursor-pointer p-3 border rounded flex items-center gap-3 hover:bg-gray-50"
+              >
+                <img
+                  src={u.avatar || "/default-avatar.png"}
+                  alt={u.name}
+                  className="w-12 h-12 rounded-full border"
+                />
+                <div>
+                  <div className="font-medium">{u.name}</div>
+                  <div
+                    className={`text-sm ${
+                      unread ? "font-semibold text-gray-900" : "text-gray-500"
+                    }`}
+                  >
+                    {last ? preview : "..."}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      </div>
-
-      {/* BOTTOM MENU */}
-      <div className="fixed bottom-0 left-0 w-full bg-white z-10 flex justify-between items-center p-6 border-t">
-        <button className="px-16">Chat</button>
-        <button className="px-16">Menu</button>
-      </div>
-
-      {/* SEARCH */}
-      <div className="mb-4">
-        <input
-          className="border border-gray-400 rounded-md p-2 w-full"
-          type="search"
-          placeholder="Search"
-        />
-      </div>
-
-      {/* HORIZONTAL SCROLL LIST */}
-      <div className="overflow-x-auto scrollbar-hide">
-        <div className="inline-flex space-x-6 px-2">
-          {allusers.map((user) => (
-  <button key={user._id} onClick={() => goToUser(user)}
-              className="flex-shrink-0 min-w-[88px] flex flex-col items-center cursor-pointer bg-transparent border-0"
-            >
-              <img
-                className="rounded-full w-16 h-16 object-cover border"
-                src={user.avatar || "/default-avatar.png"}
-                alt={user.name}
-              />
-              <p className="text-sm font-semibold mt-2">{user.name}</p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* VERTICAL LIST */}
-      <div className="mt-6 space-y-2">
-        {recentUsers.map((user) => (
-  <div key={user._id} onClick={() => goToUser(user)}
-            className="flex items-center gap-3 p-2 cursor-pointer"
-          >
-            <img
-              className="w-12 h-12 rounded-full border object-cover"
-              src={user.avatar || "/default-avatar.png"}
-              alt={user.name}
-            />
-            <div>
-              <p className="font-semibold">{user.name}</p>
-              {/* Replace with last message if you store it in backend */}
-              <p className="text-gray-600">You: {user.lastMessage || "..."}</p>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
-};
-
-export default User;
+}

@@ -1,50 +1,74 @@
 const express = require("express");
+const router = express.Router();
 const Message = require("../models/Message");
 const auth = require("../middleware/auth");
-const router = express.Router();
 
-
-// POST: send a message (secure)
-router.post("/:receiverId", auth, async (req, res) => {
+// Send and save message
+router.post("/", auth, async (req, res) => {
   try {
-    const { message } = req.body;
-    const { receiverId } = req.params;
+    const { receiverId, text } = req.body;
+    const senderId = req.user.userId;
+    if (!receiverId || !text) return res.status(400).json({ message: "Receiver and text required" });
 
-    if (!receiverId || !message) {
-      return res.status(400).json({ message: "Receiver ID and message are required" });
-    }
-
-    const newMessage = await Message.create({
-      senderId: req.user.userId, // from token
-      receiverId,
-      message
-    });
-
-    res.status(201).json(newMessage);
+    const message = await Message.create({ senderId, receiverId, text });
+    res.status(201).json(message);
   } catch (err) {
-    console.error("Error sending message:", err);
-    res.status(500).json({ message: "Internal server error" });
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-// GET: messages between logged-in user and another user (secure)
-router.get("/:otherUserId", auth, async (req, res) => {
+// Get conversation between logged-in user and other user
+router.get("/conversation/:otherUserId", auth, async (req, res) => {
   try {
-    const currentUserId = req.user.userId;
-    const { otherUserId } = req.params;
+    const user1 = req.user.userId;
+    const user2 = req.params.otherUserId;
 
     const messages = await Message.find({
       $or: [
-        { senderId: currentUserId, receiverId: otherUserId },
-        { senderId: otherUserId, receiverId: currentUserId }
+        { senderId: user1, receiverId: user2 },
+        { senderId: user2, receiverId: user1 }
       ]
     }).sort({ createdAt: 1 });
 
-    res.status(200).json(messages);
+    res.json(messages);
   } catch (err) {
-    console.error("Error fetching messages:", err);
-    res.status(500).json({ message: "Internal server error" });
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 });
+
+router.patch("/seen/:otherUserId", auth, async (req, res) => {
+  try {
+    const me = req.user.userId;
+    const other = req.params.otherUserId;
+
+    const result = await Message.updateMany(
+      { senderId: other, receiverId: me, seen: false },
+      { $set: { seen: true, seenAt: new Date() } }
+    );
+
+    return res.json({ ok: true, modifiedCount: result.modifiedCount });
+  } catch (err) {
+    console.error("Error marking messages seen", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// PUT /api/message/mark-seen/:userId
+router.put("/mark-seen/:userId", auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    await Message.updateMany(
+      { senderId: userId, receiverId: req.user.userId, seen: false },
+      { $set: { seen: true, seenAt: new Date() } }
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 module.exports = router;
