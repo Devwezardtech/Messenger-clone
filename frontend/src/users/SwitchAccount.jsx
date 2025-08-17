@@ -48,14 +48,19 @@ export default function SwitchAccount() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // Update accounts history
-      const updated = accounts.map((a) =>
-        a.username === res.data.user.username
-          ? { ...a, lastLogin: new Date().toISOString() }
-          : a
-      );
-      localStorage.setItem("accounts", JSON.stringify(updated));
-      setAccounts(updated);
+      // Update accounts: mark this as active
+      // ✅ Remove active user from accounts history
+const updated = accounts
+  .filter((a) => a.username !== res.data.user.username) // remove current
+  .concat({
+    ...res.data.user,
+    lastLogin: new Date().toISOString(),
+  });
+
+localStorage.setItem("accounts", JSON.stringify(updated));
+setAccounts(updated);
+setCurrentUser(res.data.user);
+
 
       setSelectedAcc(null);
       setPasswordInput("");
@@ -78,9 +83,10 @@ export default function SwitchAccount() {
   const isActive = (acc) =>
     acc?.username && currentUser?.username === acc.username;
 
-  const activeAccount =
-    accounts.find((a) => isActive(a)) || currentUser || null;
-  const otherAccounts = accounts.filter((a) => !isActive(a));
+  const activeAccount = currentUser || null;
+  const otherAccounts = accounts.filter(
+    (a) => !isActive(a) // only logged out accounts
+  );
 
   return (
     <div className="p-6 max-w-md mx-auto">
@@ -113,54 +119,56 @@ export default function SwitchAccount() {
         </div>
       )}
 
-      {/* Other accounts */}
-      {otherAccounts.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-600 mb-2">
-            Other accounts
-          </h3>
-          <div className="grid gap-3">
-            {otherAccounts.map((acc, idx) => (
-              <div
-                key={acc._id || idx}
-                className="flex items-center gap-3 border rounded-lg p-3 hover:bg-gray-100 transition text-left"
-              >
-                <button
-                  onClick={() => setSelectedAcc(acc)}
-                  className="flex items-center gap-3 flex-1 text-left"
-                >
-                  <img
-                    src={acc.avatar || "/default-avatar.png"}
-                    alt={acc.name}
-                    className="rounded-full w-12 h-12 border"
-                  />
-                  <div className="flex flex-col">
-                    <h4 className="font-medium">{acc.name}</h4>
-                    <span className="text-sm text-gray-500">
-                      @{acc.username}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      Last signed in{" "}
-                      {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}
-                    </span>
-                  </div>
-                  <span className="ml-auto text-gray-400 text-sm">
-                    Logged out
-                  </span>
-                </button>
+      {/* Other accounts (only logged-out ones) */}
+      {/* Other accounts (only logged-out ones) */}
+{otherAccounts.length > 0 && (
+  <div className="mb-6">
+    <h3 className="text-sm font-semibold text-gray-600 mb-2">
+      Accounts history
+    </h3>
+    <div className="grid gap-3">
+      {otherAccounts.map((acc, idx) => (
+        <div
+          key={acc._id || idx}
+          className="flex items-center gap-3 border rounded-lg p-3 hover:bg-gray-100 transition text-left"
+        >
+          <button
+            onClick={() => setSelectedAcc(acc)}
+            className="flex items-center gap-3 flex-1 text-left"
+          >
+            <img
+              src={acc.avatar || "/default-avatar.png"}
+              alt={acc.name}
+              className="rounded-full w-12 h-12 border"
+            />
+            <div className="flex flex-col">
+              <h4 className="font-medium">{acc.name}</h4>
+              <span className="text-sm text-gray-500">
+                @{acc.username}
+              </span>
+              <span className="text-xs text-gray-400">
+                Last signed in{" "}
+                {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}
+              </span>
+            </div>
+            <span className="ml-auto text-gray-400 text-sm">
+              Logged out
+            </span>
+          </button>
 
-                {/* Remove button */}
-                <button
-                  onClick={() => handleRemove(acc.username)}
-                  className="ml-3 text-red-500 text-sm hover:underline"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
+          {/* Remove button */}
+          <button
+            onClick={() => handleRemove(acc.username)}
+            className="ml-3 text-red-500 text-sm hover:underline"
+          >
+            Remove
+          </button>
         </div>
-      )}
+      ))}
+    </div>
+  </div>
+)}
+
 
       {/* Add account */}
       <div className="mt-6">
@@ -177,7 +185,7 @@ export default function SwitchAccount() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-6 w-80 shadow-lg">
             <h3 className="text-lg font-semibold mb-4">
-              Verify {selectedAcc.username}
+              Verify {selectedAcc.name}
             </h3>
             <input
               type="password"

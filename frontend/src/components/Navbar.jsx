@@ -5,8 +5,22 @@ export default function Navbar() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  const active = JSON.parse(localStorage.getItem("user") || "null");
+  const stored = JSON.parse(localStorage.getItem("accounts") || "[]");
+
+  if (active) {
+    // Push logged-out user into history with timestamp
+    const updated = [
+      ...stored.filter((a) => a.username !== active.username), // remove duplicates
+      { ...active, lastLogin: new Date().toISOString() }
+    ];
+
+    localStorage.setItem("accounts", JSON.stringify(updated));
+  }
+
+  // Clear active user but keep accounts
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
     navigate("/login");
   };
   return (
