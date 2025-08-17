@@ -222,55 +222,56 @@ export default function Chat() {
         </div>
 
         {/* Messages */}
-        <div
-          ref={messagesRef}
-          className="border rounded p-3 h-[60vh] overflow-y-auto mb-4 space-y-3"
-        >
-          {messages.map((m) => {
-            const mine = m.senderId === myId;
-            return (
-              <div
-                key={m._id || `${m.senderId}-${m.receiverId}-${m.createdAt}`}
-                className={`flex ${mine ? "justify-end" : "justify-start"}`}
-              >
-                {!mine && (
-                  <img
-                    src={other?.avatar || "/default-avatar.png"}
-                    className="w-8 h-8 rounded-full mr-2"
-                  />
-                )}
-                <div
-                  className={`px-3 py-2 rounded-lg max-w-[70%] ${
-                    mine
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                  {m.text}
-                  <div className="text-xs text-gray-500 mt-1">
-                    {new Date(m.createdAt).toLocaleTimeString()}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Input */}
-        <div className="flex gap-2">
-          <input
-            value={text}
-            onChange={handleTyping}
-            placeholder="Type a message..."
-            className="flex-grow border px-3 py-2 rounded"
+<div
+  ref={messagesRef}
+  className="border-t rounded p-3 h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide mb-20 space-y-3"
+>
+  {messages.map((m) => {
+    const mine = m.senderId === myId;
+    return (
+      <div
+        key={m._id || `${m.senderId}-${m.receiverId}-${m.createdAt}`}
+        className={`flex ${mine ? "justify-end" : "justify-start"}`}
+      >
+        {!mine && (
+          <img
+            src={other?.avatar || "/default-avatar.png"}
+            className="w-8 h-8 rounded-full mr-2"
           />
-          <button
-            onClick={send}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            Send
-          </button>
+        )}
+        <div
+          className={`px-3 py-2 rounded-lg max-w-[70%] ${
+            mine
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 text-gray-800"
+          }`}
+        >
+          {m.text}
+          <div className="text-xs text-gray-500 mt-1">
+            {new Date(m.createdAt).toLocaleTimeString()}
+          </div>
         </div>
+      </div>
+    );
+  })}
+</div>
+
+{/* Fixed Input */}
+<div className="fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex gap-2 max-w-md mx-auto">
+  <input
+    value={text}
+    onChange={handleTyping}
+    placeholder="Type a message..."
+    className="flex-grow border px-3 py-2 rounded"
+  />
+  <button
+    onClick={send}
+    className="bg-blue-600 text-white px-4 py-2 rounded"
+  >
+    Send
+  </button>
+</div>
+
       </div>
     </div>
   );
