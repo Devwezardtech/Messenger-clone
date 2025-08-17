@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
+// Utility: time ago format
 function timeAgo(date) {
   if (!date) return "";
   const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -13,80 +15,71 @@ function timeAgo(date) {
   return `${days} days ago`;
 }
 
-function normalizeAccount(a = {}) {
-  // unify common fields so comparisons work
-  return {
-    _id: a._id ?? a.id ?? a.userId ?? a.uid ?? null,
-    name: a.name ?? a.fullName ?? a.displayName ?? "Unknown",
-    username: a.username ?? a.handle ?? a.userName ?? null,
-    avatar: a.avatar ?? a.photoURL ?? a.photo ?? null,
-    lastLogin: a.lastLogin ?? a.lastSignedIn ?? a.updatedAt ?? a.createdAt ?? null,
-    raw: a,
-  };
-}
-
 export default function SwitchAccount() {
   const [accounts, setAccounts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [selectedAcc, setSelectedAcc] = useState(null);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Load from localStorage
   useEffect(() => {
-    const storedList = JSON.parse(localStorage.getItem("accounts") || "[]");
-    const activeRaw = JSON.parse(localStorage.getItem("user") || "null");
-
-    const normalizedList = Array.isArray(storedList)
-      ? storedList.map(normalizeAccount)
-      : [];
-
-    const normalizedActive = activeRaw ? normalizeAccount(activeRaw) : null;
-
-    // Ensure the active user appears in the list (dedupe by _id or username)
-    let merged = normalizedList;
-    if (normalizedActive) {
-      const activeId = normalizedActive._id;
-      const activeUserName = normalizedActive.username;
-      const exists = normalizedList.some(
-        (a) =>
-          (a._id && activeId && a._id === activeId) ||
-          (a.username && activeUserName && a.username === activeUserName)
-      );
-      if (!exists) {
-        merged = [normalizedActive, ...normalizedList];
-      }
-    }
-
-    setAccounts(merged);
-    setCurrentUser(normalizedActive);
+    const stored = JSON.parse(localStorage.getItem("accounts") || "[]");
+    const active = JSON.parse(localStorage.getItem("user") || "null");
+    setAccounts(Array.isArray(stored) ? stored : []);
+    setCurrentUser(active);
   }, []);
 
-  const handleSwitch = (account) => {
-    // persist back the original object if available
-    localStorage.setItem("user", JSON.stringify(account.raw || account));
-    // optional: update lastLogin timestamp
+  // API call to verify login
+  const handleConfirmSwitch = async () => {
+    if (!selectedAcc) return;
+    setLoading(true);
+    setError("");
+
     try {
-      const list = JSON.parse(localStorage.getItem("accounts") || "[]");
-      const accIdx = list.findIndex(
-        (a) =>
-          (a._id && account._id && a._id === account._id) ||
-          (a.id && account._id && a.id === account._id) ||
-          (a.username && account.username && a.username === account.username)
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        name: selectedAcc.name,
+        password: passwordInput,
+      });
+
+      // ✅ Save new active user
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // Update accounts history
+      const updated = accounts.map((a) =>
+        a.username === res.data.user.username
+          ? { ...a, lastLogin: new Date().toISOString() }
+          : a
       );
-      if (accIdx !== -1) {
-        list[accIdx] = { ...list[accIdx], lastLogin: new Date().toISOString() };
-        localStorage.setItem("accounts", JSON.stringify(list));
-      }
-    } catch {}
-    navigate("/users");
+      localStorage.setItem("accounts", JSON.stringify(updated));
+      setAccounts(updated);
+
+      setSelectedAcc(null);
+      setPasswordInput("");
+      navigate("/users");
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid credentials");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // split into active + others
-  const activeId = currentUser?._id;
-  const activeUsername = currentUser?.username;
-  const isActive = (acc) =>
-    (acc._id && activeId && acc._id === activeId) ||
-    (acc.username && activeUsername && acc.username === activeUsername);
+  // Remove an account from history
+  const handleRemove = (username) => {
+    const filtered = accounts.filter((a) => a.username !== username);
+    setAccounts(filtered);
+    localStorage.setItem("accounts", JSON.stringify(filtered));
+  };
 
-  const activeAccount = accounts.find(isActive) || currentUser || null;
+  // Helpers
+  const isActive = (acc) =>
+    acc?.username && currentUser?.username === acc.username;
+
+  const activeAccount =
+    accounts.find((a) => isActive(a)) || currentUser || null;
   const otherAccounts = accounts.filter((a) => !isActive(a));
 
   return (
@@ -106,10 +99,13 @@ export default function SwitchAccount() {
             <div className="flex flex-col text-left">
               <h4 className="font-medium">{activeAccount.name}</h4>
               <span className="text-sm text-gray-500">
-                @{activeAccount.username || activeAccount.name?.toLowerCase()}
+                @{activeAccount.username}
               </span>
               <span className="text-xs text-gray-400">
-                Signed in {activeAccount.lastLogin ? timeAgo(activeAccount.lastLogin) : "recently"}
+                Signed in{" "}
+                {activeAccount.lastLogin
+                  ? timeAgo(activeAccount.lastLogin)
+                  : "recently"}
               </span>
             </div>
             <span className="ml-auto text-green-600 font-bold text-lg">✔</span>
@@ -117,44 +113,56 @@ export default function SwitchAccount() {
         </div>
       )}
 
-      {/* Other (logged out) accounts */}
+      {/* Other accounts */}
       {otherAccounts.length > 0 && (
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-600 mb-2">Other accounts</h3>
+          <h3 className="text-sm font-semibold text-gray-600 mb-2">
+            Other accounts
+          </h3>
           <div className="grid gap-3">
-            {otherAccounts.map((acc) => (
-              <button
-                key={acc._id || acc.username || acc.name}
-                onClick={() => handleSwitch(acc)}
+            {otherAccounts.map((acc, idx) => (
+              <div
+                key={acc._id || idx}
                 className="flex items-center gap-3 border rounded-lg p-3 hover:bg-gray-100 transition text-left"
               >
-                <img
-                  src={acc.avatar || "/default-avatar.png"}
-                  alt={acc.name}
-                  className="rounded-full w-12 h-12 border"
-                />
-                <div className="flex flex-col">
-                  <h4 className="font-medium">{acc.name}</h4>
-                  <span className="text-sm text-gray-500">
-                    @{acc.username || acc.name?.toLowerCase()}
+                <button
+                  onClick={() => setSelectedAcc(acc)}
+                  className="flex items-center gap-3 flex-1 text-left"
+                >
+                  <img
+                    src={acc.avatar || "/default-avatar.png"}
+                    alt={acc.name}
+                    className="rounded-full w-12 h-12 border"
+                  />
+                  <div className="flex flex-col">
+                    <h4 className="font-medium">{acc.name}</h4>
+                    <span className="text-sm text-gray-500">
+                      @{acc.username}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      Last signed in{" "}
+                      {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}
+                    </span>
+                  </div>
+                  <span className="ml-auto text-gray-400 text-sm">
+                    Logged out
                   </span>
-                  <span className="text-xs text-gray-400">
-                    Last signed in {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}
-                  </span>
-                </div>
-                <span className="ml-auto text-gray-400 text-sm">Logged out</span>
-              </button>
+                </button>
+
+                {/* Remove button */}
+                <button
+                  onClick={() => handleRemove(acc.username)}
+                  className="ml-3 text-red-500 text-sm hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Empty state */}
-      {!activeAccount && otherAccounts.length === 0 && (
-        <div className="text-sm text-gray-500 mb-6">No saved accounts yet.</div>
-      )}
-
-      {/* Add Account */}
+      {/* Add account */}
       <div className="mt-6">
         <button
           onClick={() => navigate("/login")}
@@ -163,6 +171,44 @@ export default function SwitchAccount() {
           ➕ Add account
         </button>
       </div>
+
+      {/* Password Modal */}
+      {selectedAcc && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-6 w-80 shadow-lg">
+            <h3 className="text-lg font-semibold mb-4">
+              Verify {selectedAcc.username}
+            </h3>
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder="Enter password"
+              className="w-full border rounded p-2 mb-3"
+            />
+            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-3 py-1 rounded bg-gray-200"
+                onClick={() => {
+                  setSelectedAcc(null);
+                  setPasswordInput("");
+                  setError("");
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-3 py-1 rounded bg-blue-500 text-white"
+                disabled={loading}
+                onClick={handleConfirmSwitch}
+              >
+                {loading ? "Verifying..." : "Confirm"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
