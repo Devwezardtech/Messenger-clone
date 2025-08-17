@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import { io } from "socket.io-client";
@@ -18,6 +18,7 @@ export default function Chat() {
   const socketRef = useRef(null);
   const messagesRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+  const navigate = useNavigate();
 
   const myId = me?.id;
 
@@ -185,13 +186,18 @@ export default function Chat() {
     }, 1500);
   };
 
+  const back = () => {
+    navigate("/users");
+  }
+
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="p-4 max-w-md mx-auto">
+      <div className="p-1 max-w-md mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="relative">
+          <div className="relative flex gap-2">
+            <button className="" onClick={back}>{"<--"}</button>
             <img
               src={other?.avatar || "/default-avatar.png"}
               alt={other?.name}

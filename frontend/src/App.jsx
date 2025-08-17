@@ -4,6 +4,8 @@ import Login from "./users/login";
 import Register from "./users/signup";
 import Users from "./users/user";
 import Chat from "./users/Chat";
+import Menu from "./users/Menu";
+import SwitchAccount from "./users/SwitchAccount";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -25,6 +27,8 @@ function App() {
       <Route path="/users" element={token ? <Users /> : <Navigate to="/login" />} />
       <Route path="/chat/:id" element={token ? <Chat /> : <Navigate to="/login" />} />
       <Route path="/" element={token ? <Navigate to="/users" /> : <Navigate to="/login" />} />
+      <Route path="/users/menu" element={ <Menu />} />
+      <Route path="/switch" element={ <SwitchAccount />} />
     </Routes>
   );
 }

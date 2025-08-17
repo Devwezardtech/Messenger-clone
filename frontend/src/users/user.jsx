@@ -8,6 +8,7 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [lastMessages, setLastMessages] = useState({});
   const [onlineUsers, setOnlineUsers] = useState({});
+  const [searchQuery, setSearchQuery] = useState(""); // NEW
   const token = localStorage.getItem("token");
   const me = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
@@ -110,9 +111,96 @@ export default function Users() {
     navigate(`/chat/${uId}`);
   };
 
+  const toUser = () => {
+    navigate("/users");
+  };
+
+  const toMenu = () => {
+    navigate("/users/menu");
+  };
+
+  // Filtered users for search
+  const filteredUsers = searchQuery
+    ? users.filter((u) =>
+        u.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
   return (
     <div className="min-h-screen">
       <Navbar />
+
+      {/* Search bar */}
+      <div className="relative">
+        <div className="flex m-4 gap-4 w-md">
+          <input
+            className="border border-gray-700 rounded-md p-1 px-2 w-full"
+            type="search"
+            placeholder="Search users..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <label>Search</label>
+        </div>
+
+        {/* Search results dropdown */}
+        {searchQuery && (
+          <div className="absolute top-16 left-4 right-4 bg-white shadow-md border rounded-md z-50 max-h-64 overflow-y-auto">
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((u) => (
+                <div
+                  key={u._id}
+                  onClick={() => handleOpenChat(u._id, lastMessages[u._id])}
+                  className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
+                >
+                  <img
+                    src={u.avatar || "/default-avatar.png"}
+                    alt={u.name}
+                    className="w-10 h-10 rounded-full border"
+                  />
+                  <div>
+                    <div className="font-medium">{u.name}</div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-2 text-gray-500 text-sm">No users found</div>
+            )}
+          </div>
+        )}
+      </div>
+
+            {/* Display online users */}
+      {Object.keys(onlineUsers).length > 0 && (
+        <div className="px-4 mb-4">
+          <h3 className="text-md font-semibold mb-2 text-start">Online</h3>
+          <div className="flex gap-4 overflow-x-auto justify-start">
+            {users
+              .filter((u) => onlineUsers[u._id]) // only online
+              .map((u) => (
+                <div
+                  key={u._id}
+                  onClick={() => handleOpenChat(u._id, lastMessages[u._id])}
+                  className="flex flex-col items-center cursor-pointer"
+                >
+                  <div className="relative">
+                    <img
+                      src={u.avatar || "/default-avatar.png"}
+                      alt={u.name}
+                      className="w-14 h-14 rounded-full border"
+                    />
+                    {/* Green dot indicator */}
+                    <span className="absolute bottom-1 right-1 block w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
+                  </div>
+                  <div className="text-xs mt-1 font-medium">{u.name}</div>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
+
+      {/* People list */}
       <div className="p-4 max-w-2xl mx-auto">
         <h2 className="text-lg font-semibold mb-4">People</h2>
 
@@ -161,6 +249,33 @@ export default function Users() {
           })}
         </div>
       </div>
+
+  {/* Bottom nav */}
+<div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t shadow-md p-3 flex justify-around">
+  <button
+    className="relative px-6 py-2 bg-blue-500 text-white rounded-full shadow hover:bg-blue-600"
+    onClick={toUser}
+  >
+    <h4>Chat</h4>
+
+    {/* Notification badge */}
+    {users.some((u) => isUnread(u._id)) && (
+      <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+        {
+          users.filter((u) => isUnread(u._id)).length
+        }
+      </div>
+    )}
+  </button>
+
+  <button
+    className="px-6 py-2 bg-gray-500 text-white rounded-full shadow hover:bg-gray-600"
+    onClick={toMenu}
+  >
+    <h4>Menu</h4>
+  </button>
+</div>
+
     </div>
   );
 }
