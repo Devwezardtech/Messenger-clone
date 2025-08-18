@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaCheckCircle, FaPlusCircle, FaSignInAlt, FaTrash, FaArrowLeft } from "react-icons/fa";
+
+// Lucide icons
+import {
+  ArrowLeft,
+  CheckCircle,
+  PlusCircle,
+  LogIn,
+  Trash2,
+} from "lucide-react";
 
 // Utility: time ago format
 function timeAgo(date) {
@@ -80,16 +88,17 @@ export default function SwitchAccount() {
   const otherAccounts = accounts.filter((a) => !isActive(a));
 
   return (
-    <div className="p-6 max-w-md mx-auto">
+    <div className="my-6 max-w-md mx-auto">
+      {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-  <button
-    onClick={() => navigate(-1)} // go back to previous page
-    className="text-gray-600 hover:text-gray-900"
-  >
-    <FaArrowLeft className="text-2xl" />
-  </button>
-  <h2 className="text-xl font-bold">Switch Account</h2>
-</div>
+        <button
+          onClick={() => navigate(-1)}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <h2 className="text-xl font-bold">Switch Account</h2>
+      </div>
 
       {/* Current account */}
       {activeAccount && (
@@ -113,7 +122,7 @@ export default function SwitchAccount() {
                   : "recently"}
               </span>
             </div>
-            <FaCheckCircle className="ml-auto text-green-600 text-xl" />
+            <CheckCircle className="ml-auto text-green-600 w-5 h-5" />
           </div>
         </div>
       )}
@@ -159,9 +168,9 @@ export default function SwitchAccount() {
 
                   <div className="ml-auto">
                     {acc.name === currentUser?.name ? (
-                      <FaCheckCircle className="text-green-600 text-xl" />
+                      <CheckCircle className="text-green-600 w-5 h-5" />
                     ) : (
-                      <FaSignInAlt className="text-blue-500 text-lg" />
+                      <LogIn className="text-blue-500 w-5 h-5" />
                     )}
                   </div>
                 </button>
@@ -171,7 +180,7 @@ export default function SwitchAccount() {
                   onClick={() => handleRemove(acc.username)}
                   className="ml-3 text-red-500 hover:text-red-700"
                 >
-                  <FaTrash />
+                  <Trash2 className="w-5 h-5" />
                 </button>
               </div>
             ))}
@@ -185,7 +194,7 @@ export default function SwitchAccount() {
           onClick={() => navigate("/login")}
           className="w-full p-3 rounded-lg border border-gray-400 hover:bg-gray-100 flex items-center justify-center gap-2"
         >
-          <FaPlusCircle /> Add account
+          <PlusCircle className="w-5 h-5" /> Add account
         </button>
       </div>
 
