@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaCheckCircle, FaPlusCircle, FaSignInAlt, FaTrash, FaArrowLeft } from "react-icons/fa";
 
 // Utility: time ago format
 function timeAgo(date) {
@@ -24,7 +25,6 @@ export default function SwitchAccount() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Load from localStorage
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("accounts") || "[]");
     const active = JSON.parse(localStorage.getItem("user") || "null");
@@ -32,7 +32,6 @@ export default function SwitchAccount() {
     setCurrentUser(active);
   }, []);
 
-  // API call to verify login
   const handleConfirmSwitch = async () => {
     if (!selectedAcc) return;
     setLoading(true);
@@ -44,23 +43,19 @@ export default function SwitchAccount() {
         password: passwordInput,
       });
 
-      //  Save new active user
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // Update accounts: mark this as active
-      //  Remove active user from accounts history
-const updated = accounts
-  .filter((a) => a.username !== res.data.user.username) // remove current
-  .concat({
-    ...res.data.user,
-    lastLogin: new Date().toISOString(),
-  });
+      const updated = accounts
+        .filter((a) => a.username !== res.data.user.username)
+        .concat({
+          ...res.data.user,
+          lastLogin: new Date().toISOString(),
+        });
 
-localStorage.setItem("accounts", JSON.stringify(updated));
-setAccounts(updated);
-setCurrentUser(res.data.user);
-
+      localStorage.setItem("accounts", JSON.stringify(updated));
+      setAccounts(updated);
+      setCurrentUser(res.data.user);
 
       setSelectedAcc(null);
       setPasswordInput("");
@@ -72,25 +67,29 @@ setCurrentUser(res.data.user);
     }
   };
 
-  // Remove an account from history
   const handleRemove = (username) => {
     const filtered = accounts.filter((a) => a.username !== username);
     setAccounts(filtered);
     localStorage.setItem("accounts", JSON.stringify(filtered));
   };
 
-  // Helpers
   const isActive = (acc) =>
     acc?.username && currentUser?.username === acc.username;
 
   const activeAccount = currentUser || null;
-  const otherAccounts = accounts.filter(
-    (a) => !isActive(a) // only logged out accounts
-  );
+  const otherAccounts = accounts.filter((a) => !isActive(a));
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Switch Account</h2>
+      <div className="flex items-center gap-3 mb-4">
+  <button
+    onClick={() => navigate(-1)} // go back to previous page
+    className="text-gray-600 hover:text-gray-900"
+  >
+    <FaArrowLeft className="text-2xl" />
+  </button>
+  <h2 className="text-xl font-bold">Switch Account</h2>
+</div>
 
       {/* Current account */}
       {activeAccount && (
@@ -114,76 +113,79 @@ setCurrentUser(res.data.user);
                   : "recently"}
               </span>
             </div>
-           <span className="ml-auto text-green-600 font-bold text-lg">✔</span>
+            <FaCheckCircle className="ml-auto text-green-600 text-xl" />
           </div>
         </div>
       )}
 
-      {/* Other accounts (only logged-out ones) */}
-      {/* Other accounts (only logged-out ones) */}
-{otherAccounts.length > 0 && (
-  <div className="mb-6">
-    <h3 className="text-sm font-semibold text-gray-600 mb-2">
-      Accounts history
-    </h3>
-    <div className="grid gap-3">
-      {otherAccounts.map((acc, idx) => (
-        <div
-          key={acc._id || idx}
-          className="flex items-center gap-3 border rounded-lg p-3 hover:bg-gray-100 transition text-left"
-        >
-        <button
-  onClick={acc.name === currentUser?.name ? undefined : () => setSelectedAcc(acc)}
-  disabled={acc.name === currentUser?.name} // optional: visually disables
-  className={`flex items-center gap-3 flex-1 text-left ${
-    acc.name === currentUser?.name ? "cursor-not-allowed opacity-60" : ""
-  }`}
->
-  <img
-    src={acc.avatar || "/default-avatar.png"}
-    alt={acc.name}
-    className="rounded-full w-12 h-12 border"
-  />
-  <div className="flex flex-col">
-    <h4 className="font-medium">{acc.name}</h4>
-    <span className="text-sm text-gray-500">@{acc.username}</span>
-    <span className="text-xs text-gray-400">
-      Last signed in {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}
-    </span>
-  </div>
+      {/* Other accounts */}
+      {otherAccounts.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-600 mb-2">
+            Accounts history
+          </h3>
+          <div className="grid gap-3">
+            {otherAccounts.map((acc, idx) => (
+              <div
+                key={acc._id || idx}
+                className="flex items-center gap-3 border rounded-lg p-3 hover:bg-gray-100 transition text-left"
+              >
+                <button
+                  onClick={
+                    acc.name === currentUser?.name
+                      ? undefined
+                      : () => setSelectedAcc(acc)
+                  }
+                  disabled={acc.name === currentUser?.name}
+                  className={`flex items-center gap-3 flex-1 text-left ${
+                    acc.name === currentUser?.name
+                      ? "cursor-not-allowed opacity-60"
+                      : ""
+                  }`}
+                >
+                  <img
+                    src={acc.avatar || "/default-avatar.png"}
+                    alt={acc.name}
+                    className="rounded-full w-12 h-12 border"
+                  />
+                  <div className="flex flex-col">
+                    <h4 className="font-medium">{acc.name}</h4>
+                    <span className="text-sm text-gray-500">@{acc.username}</span>
+                    <span className="text-xs text-gray-400">
+                      Last signed in{" "}
+                      {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}
+                    </span>
+                  </div>
 
-  {/* Action label (Sign in and Logout) */}
-  <div className="ml-auto">
-    {acc.name === currentUser?.name ? (
-      <span className="ml-auto text-green-600 font-bold text-lg">✔</span>
-    ) : (
-      <span className="text-red-300 font-semibold text-sm hover:text-blue-600">Login</span>
-    )}
-  </div>
-</button>
+                  <div className="ml-auto">
+                    {acc.name === currentUser?.name ? (
+                      <FaCheckCircle className="text-green-600 text-xl" />
+                    ) : (
+                      <FaSignInAlt className="text-blue-500 text-lg" />
+                    )}
+                  </div>
+                </button>
 
-
-          {/* Remove button */}
-          <button
-            onClick={() => handleRemove(acc.username)}
-            className="ml-3 text-red-500 text-sm hover:text-blue-400"
-          >
-            Remove
-          </button>
+                {/* Remove button */}
+                <button
+                  onClick={() => handleRemove(acc.username)}
+                  className="ml-3 text-red-500 hover:text-red-700"
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-)}
-
+      )}
 
       {/* Add account */}
       <div className="mt-6">
         <button
           onClick={() => navigate("/login")}
-          className="w-full p-3 rounded-lg border border-gray-400 hover:bg-gray-100"
+          className="w-full p-3 rounded-lg border border-gray-400 hover:bg-gray-100 flex items-center justify-center gap-2"
         >
-          ➕ Add account
+          <FaPlusCircle /> Add account
         </button>
       </div>
 
