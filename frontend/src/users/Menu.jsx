@@ -14,6 +14,7 @@ import {
   Grid,
   ArrowLeft
 } from "lucide-react";
+import BottomNav from "../components/BottomNav";
 
 export default function Menu() {
   const [user, setUser] = useState(null);
@@ -27,9 +28,6 @@ export default function Menu() {
   if (!user) {
     return <div className="p-4">Loading...</div>;
   }
-
-  const toUser = () => navigate("/users");
-  const toMenu = () => navigate("/users/menu");
 
   return (
     <div className="my-4 mx-8">
@@ -131,22 +129,7 @@ export default function Menu() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t shadow-md p-3 flex justify-around">
-        <button
-          className="flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded-full shadow hover:bg-blue-600"
-          onClick={toUser}
-        >
-          <MessageCircle className="w-5 h-5" />
-          Chats
-        </button>
-        <button
-          className="flex items-center gap-1 px-4 py-2 bg-gray-500 text-white rounded-full shadow hover:bg-gray-600"
-          onClick={toMenu}
-        >
-          <Grid className="w-5 h-5" />
-          Menu
-        </button>
-      </div>
+     <BottomNav />
     </div>
   );
 }

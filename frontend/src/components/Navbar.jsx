@@ -39,7 +39,7 @@ export default function Navbar() {
         {token && (
           <button
             onClick={logout}
-            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
+            className="flex items-center gap-2 bg-red-400 hover:bg-red-500 text-white px-2 py-1 rounded-md transition"
           >
             <LogOut size={18} />
             Logout

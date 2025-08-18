@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { MessageSquare, Menu, Search, CircleUserRound } from "lucide-react";
+import BottomNav from "../components/BottomNav";
 
 
 export default function Users() {
@@ -113,14 +114,6 @@ export default function Users() {
     navigate(`/chat/${uId}`);
   };
 
-  const toUser = () => {
-    navigate("/users");
-  };
-
-  const toMenu = () => {
-    navigate("/users/menu");
-  };
-
   // Filtered users for search
   const filteredUsers = searchQuery
     ? users.filter((u) =>
@@ -135,7 +128,7 @@ export default function Users() {
       {/* Search bar */}
       <div className="relative">
         {/* Search bar */}
-<div className="w-full max-w-md mx-auto mt-6">
+<div className="w-full max-w-md mx-auto mt-1">
   <div className="relative">
     {/* Icon inside input */}
     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -227,7 +220,7 @@ export default function Users() {
               <div
                 key={u._id}
                 onClick={() => handleOpenChat(u._id, last)}
-                className="cursor-pointer p-3 border rounded flex items-center gap-3 hover:bg-gray-50"
+                className="cursor-pointer p-3 rounded flex items-center gap-3 hover:bg-gray-50"
               >
                 <div className="relative">
                   <img
@@ -260,30 +253,7 @@ export default function Users() {
       </div>
 
 {/* Bottom nav */}
-<div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t shadow-md p-3 flex justify-around">
-  <button
-    className="relative flex flex-col items-center gap-1 px-6 py-2 text-gray-700 hover:text-blue-600"
-    onClick={toUser}
-  >
-    <MessageSquare size={22} />
-    <span className="text-sm">Chat</span>
-
-    {/* Notification badge */}
-    {users.some((u) => isUnread(u._id)) && (
-      <div className="absolute top-0 right-5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-        {users.filter((u) => isUnread(u._id)).length}
-      </div>
-    )}
-  </button>
-
-  <button
-    className="flex flex-col items-center gap-1 px-6 py-2 text-gray-700 hover:text-blue-600"
-    onClick={toMenu}
-  >
-    <Menu size={22} />
-    <span className="text-sm">Menu</span>
-  </button>
-</div>
+<BottomNav users={users} isUnread={isUnread} />
 
 
     </div>
