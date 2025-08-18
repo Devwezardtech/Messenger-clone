@@ -44,12 +44,12 @@ export default function SwitchAccount() {
         password: passwordInput,
       });
 
-      // ✅ Save new active user
+      //  Save new active user
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
       // Update accounts: mark this as active
-      // ✅ Remove active user from accounts history
+      //  Remove active user from accounts history
 const updated = accounts
   .filter((a) => a.username !== res.data.user.username) // remove current
   .concat({
@@ -114,7 +114,7 @@ setCurrentUser(res.data.user);
                   : "recently"}
               </span>
             </div>
-            <span className="ml-auto text-green-600 font-bold text-lg">✔</span>
+           <span className="ml-auto text-green-600 font-bold text-lg">✔</span>
           </div>
         </div>
       )}
@@ -132,34 +132,41 @@ setCurrentUser(res.data.user);
           key={acc._id || idx}
           className="flex items-center gap-3 border rounded-lg p-3 hover:bg-gray-100 transition text-left"
         >
-          <button
-            onClick={() => setSelectedAcc(acc)}
-            className="flex items-center gap-3 flex-1 text-left"
-          >
-            <img
-              src={acc.avatar || "/default-avatar.png"}
-              alt={acc.name}
-              className="rounded-full w-12 h-12 border"
-            />
-            <div className="flex flex-col">
-              <h4 className="font-medium">{acc.name}</h4>
-              <span className="text-sm text-gray-500">
-                @{acc.username}
-              </span>
-              <span className="text-xs text-gray-400">
-                Last signed in{" "}
-                {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}
-              </span>
-            </div>
-            <span className="ml-auto text-gray-400 text-sm">
-              Logged out
-            </span>
-          </button>
+        <button
+  onClick={acc.name === currentUser?.name ? undefined : () => setSelectedAcc(acc)}
+  disabled={acc.name === currentUser?.name} // optional: visually disables
+  className={`flex items-center gap-3 flex-1 text-left ${
+    acc.name === currentUser?.name ? "cursor-not-allowed opacity-60" : ""
+  }`}
+>
+  <img
+    src={acc.avatar || "/default-avatar.png"}
+    alt={acc.name}
+    className="rounded-full w-12 h-12 border"
+  />
+  <div className="flex flex-col">
+    <h4 className="font-medium">{acc.name}</h4>
+    <span className="text-sm text-gray-500">@{acc.username}</span>
+    <span className="text-xs text-gray-400">
+      Last signed in {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}
+    </span>
+  </div>
+
+  {/* Action label (Sign in and Logout) */}
+  <div className="ml-auto">
+    {acc.name === currentUser?.name ? (
+      <span className="ml-auto text-green-600 font-bold text-lg">✔</span>
+    ) : (
+      <span className="text-red-300 font-semibold text-sm hover:text-blue-600">Login</span>
+    )}
+  </div>
+</button>
+
 
           {/* Remove button */}
           <button
             onClick={() => handleRemove(acc.username)}
-            className="ml-3 text-red-500 text-sm hover:underline"
+            className="ml-3 text-red-500 text-sm hover:text-blue-400"
           >
             Remove
           </button>
