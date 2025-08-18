@@ -183,18 +183,14 @@ export default function Chat() {
     }, 1500);
   };
 
-  const back = () => {
-    navigate("/users");
-  };
-
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="max-w-md mx-auto">
+      <div className="mt-4 max-w-md mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="relative flex gap-2 items-center">
-            <button onClick={back} className="p-1 rounded hover:bg-gray-100">
+            <button onClick={() => navigate(-1)} className="p-1 rounded hover:bg-gray-100">
               <ArrowLeft className="w-6 h-6 text-gray-700" />
             </button>
             <img

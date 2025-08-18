@@ -3,6 +3,8 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import { MessageSquare, Menu, Search, CircleUserRound } from "lucide-react";
+
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -132,16 +134,23 @@ export default function Users() {
 
       {/* Search bar */}
       <div className="relative">
-        <div className="flex m-4 gap-4 w-md">
-          <input
-            className="border border-gray-700 rounded-md p-1 px-2 w-full"
-            type="search"
-            placeholder="Search users..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <label>Search</label>
-        </div>
+        {/* Search bar */}
+<div className="w-full max-w-md mx-auto mt-6">
+  <div className="relative">
+    {/* Icon inside input */}
+    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+    
+    <input
+      type="search"
+      placeholder="Search users..."
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      className="w-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 py-2 text-sm 
+                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+    />
+  </div>
+</div>
+
 
         {/* Search results dropdown */}
         {searchQuery && (
@@ -250,31 +259,32 @@ export default function Users() {
         </div>
       </div>
 
-  {/* Bottom nav */}
+{/* Bottom nav */}
 <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t shadow-md p-3 flex justify-around">
   <button
-    className="relative px-6 py-2 bg-blue-500 text-white rounded-full shadow hover:bg-blue-600"
+    className="relative flex flex-col items-center gap-1 px-6 py-2 text-gray-700 hover:text-blue-600"
     onClick={toUser}
   >
-    <h4>Chat</h4>
+    <MessageSquare size={22} />
+    <span className="text-sm">Chat</span>
 
     {/* Notification badge */}
     {users.some((u) => isUnread(u._id)) && (
-      <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-        {
-          users.filter((u) => isUnread(u._id)).length
-        }
+      <div className="absolute top-0 right-5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+        {users.filter((u) => isUnread(u._id)).length}
       </div>
     )}
   </button>
 
   <button
-    className="px-6 py-2 bg-gray-500 text-white rounded-full shadow hover:bg-gray-600"
+    className="flex flex-col items-center gap-1 px-6 py-2 text-gray-700 hover:text-blue-600"
     onClick={toMenu}
   >
-    <h4>Menu</h4>
+    <Menu size={22} />
+    <span className="text-sm">Menu</span>
   </button>
 </div>
+
 
     </div>
   );
