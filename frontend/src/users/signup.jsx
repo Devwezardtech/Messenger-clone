@@ -19,7 +19,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <form onSubmit={submit} className="p-6 border rounded max-w-md w-full">
         <h2 className="text-xl font-semibold mb-4">Register</h2>
         <input value={name} onChange={e => setName(e.target.value)} placeholder="Name" className="w-full mb-2 border px-3 py-2 rounded" />

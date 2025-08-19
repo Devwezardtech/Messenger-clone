@@ -186,7 +186,7 @@ export default function Chat() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="mt-4 max-w-md mx-auto">
+      <div className="mt-4 max-w-md mx-4">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="relative flex gap-2 items-center">

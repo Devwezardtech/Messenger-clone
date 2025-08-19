@@ -50,7 +50,7 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <form onSubmit={submit} className="p-6 border rounded max-w-md w-full">
         <h2 className="text-xl font-semibold mb-4">Login</h2>
         <input

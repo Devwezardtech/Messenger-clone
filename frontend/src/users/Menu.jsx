@@ -53,10 +53,10 @@ const handleNotAvailable = (feature) => {
 )}
 
       {/* Header */}
-      <div className="flex m-2 justify-between items-center">
+      <div className="flex my-2 justify-between items-center">
         <div className="flex items-center bg-gray-100">
           <button
-            className="mr-4 text-gray-700 hover:text-black"
+            className="text-gray-700 hover:text-black"
             onClick={() => navigate(-1)}
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
@@ -71,7 +71,7 @@ const handleNotAvailable = (feature) => {
       {/* Profile section */}
       <button
         onClick={() => navigate("/switch")}
-        className="w-full p-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3"
+        className="w-full py-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3"
       >
         <img
           src={user.avatar || "/default-avatar.png"}
@@ -83,7 +83,7 @@ const handleNotAvailable = (feature) => {
             {user.name}
           </h4>
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <span className="cursor-pointer hover:underline">
+            <span className="cursor-pointer">
               Switch profile
             </span>
             <span className="text-gray-400">
