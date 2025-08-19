@@ -88,7 +88,7 @@ export default function SwitchAccount() {
   const otherAccounts = accounts.filter((a) => !isActive(a));
 
   return (
-    <div className="my-6 max-w-md mx-auto">
+    <div className="my-6 max-w-md mx-8">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <button
@@ -104,7 +104,7 @@ export default function SwitchAccount() {
       {activeAccount && (
         <div className="mb-6">
           <h3 className="text-sm font-semibold text-gray-600 mb-2">Current</h3>
-          <div className="flex items-center gap-3 border rounded-lg p-3 bg-green-50">
+          <div className="flex items-center gap-3 rounded-lg p-3 bg-green-50">
             <img
               src={activeAccount.avatar || "/default-avatar.png"}
               alt={activeAccount.name}
@@ -113,7 +113,7 @@ export default function SwitchAccount() {
             <div className="flex flex-col text-left">
               <h4 className="font-medium">{activeAccount.name}</h4>
               <span className="text-sm text-gray-500">
-                @{activeAccount.username}
+                @{activeAccount.name}
               </span>
               <span className="text-xs text-gray-400">
                 Signed in{" "}
@@ -137,7 +137,7 @@ export default function SwitchAccount() {
             {otherAccounts.map((acc, idx) => (
               <div
                 key={acc._id || idx}
-                className="flex items-center gap-3 border rounded-lg p-3 hover:bg-gray-100 transition text-left"
+                className="flex items-center gap-3 rounded-lg p-3 hover:bg-gray-100 transition text-left"
               >
                 <button
                   onClick={
@@ -159,7 +159,7 @@ export default function SwitchAccount() {
                   />
                   <div className="flex flex-col">
                     <h4 className="font-medium">{acc.name}</h4>
-                    <span className="text-sm text-gray-500">@{acc.username}</span>
+                    <span className="text-sm text-gray-500">@{acc.name}</span>
                     <span className="text-xs text-gray-400">
                       Last signed in{" "}
                       {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}

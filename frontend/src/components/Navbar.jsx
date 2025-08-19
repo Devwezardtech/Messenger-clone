@@ -27,7 +27,8 @@ export default function Navbar() {
   };
 
   return (
-    <div className="w-full p-3 border-b flex justify-between items-center bg-white shadow-sm">
+    <div className="w-full py-4 px-6 border-b flex justify-between items-center bg-white shadow-sm">
+      
       {/* Logo / Title */}
       <div className="flex items-center gap-2 text-indigo-600">
         <MessageCircle size={22} />

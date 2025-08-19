@@ -129,7 +129,7 @@ export default function Users() {
       <div className="relative">
         {/* Search bar */}
 <div className="w-full max-w-md mx-auto mt-1">
-  <div className="relative">
+  <div className="relative mx-4">
     {/* Icon inside input */}
     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
     
@@ -138,7 +138,7 @@ export default function Users() {
       placeholder="Search users..."
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
-      className="w-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 py-2 text-sm 
+      className="w-full  rounded-lg border border-gray-300 bg-white pl-10 pr-4 py-2 text-sm 
                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
     />
   </div>
@@ -147,7 +147,7 @@ export default function Users() {
 
         {/* Search results dropdown */}
         {searchQuery && (
-          <div className="absolute top-16 left-4 right-4 bg-white shadow-md border rounded-md z-50 max-h-64 overflow-y-auto">
+          <div className="absolute top-11 left-3 right-3 bg-white shadow-sm border rounded-md z-50 max-h-64 overflow-y-auto">
             {filteredUsers.length > 0 ? (
               filteredUsers.map((u) => (
                 <div
@@ -174,7 +174,7 @@ export default function Users() {
 
             {/* Display online users */}
       {Object.keys(onlineUsers).length > 0 && (
-        <div className="px-4 mb-4">
+        <div className="px-4 mb-4 mx-1">
           <h3 className="text-md font-semibold mb-2 text-start">Online</h3>
           <div className="flex gap-4 overflow-x-auto justify-start">
             {users
@@ -220,7 +220,7 @@ export default function Users() {
               <div
                 key={u._id}
                 onClick={() => handleOpenChat(u._id, last)}
-                className="cursor-pointer p-3 rounded flex items-center gap-3 hover:bg-gray-50"
+                className="cursor-pointer py-3 px-1 rounded flex items-center gap-3 hover:bg-gray-50"
               >
                 <div className="relative">
                   <img

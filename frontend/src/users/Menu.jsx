@@ -10,14 +10,14 @@ import {
   Bot,
   PlusCircle,
   Users,
-  MessageCircle,
-  Grid,
-  ArrowLeft
+  ArrowLeft,
+  Bell
 } from "lucide-react";
 import BottomNav from "../components/BottomNav";
 
 export default function Menu() {
   const [user, setUser] = useState(null);
+  const [toast, setToast] = useState(""); // for popup message
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,21 +25,45 @@ export default function Menu() {
     setUser(storedUser);
   }, []);
 
+ // function to show popup
+const handleNotAvailable = (feature) => {
+  setToast(
+    <div>
+      <strong>{feature}</strong>
+      Not available yet
+    </div>
+  );
+
+  setTimeout(() => setToast(""), 2000);
+};
+
+
   if (!user) {
     return <div className="p-4">Loading...</div>;
   }
 
   return (
-    <div className="my-4 mx-8">
+    <div className="my-4 mx-8 relative">
+     {/* Toast popup */}
+{toast && (
+  <div className="fixed top-5 left-1/2 transform -translate-x-1/2 flex items-center gap-2 bg-yellow-100 text-black px-4 py-2 rounded-lg shadow-lg z-50">
+    <Bell className="text-yellow-800" size={20} />
+    <span className="whitespace-pre-line">{toast}</span>
+  </div>
+)}
+
       {/* Header */}
       <div className="flex m-2 justify-between items-center">
         <div className="flex items-center bg-gray-100">
-      <button className="mr-4 text-gray-700 hover:text-black" onClick={() => navigate(-1)}>
-        <ArrowLeft className="w-6 h-6 text-gray-700" />
-      </button>
-      <h1 className="text-lg font-semibold">Menu</h1>
-    </div>
-        <button >
+          <button
+            className="mr-4 text-gray-700 hover:text-black"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          <h1 className="text-lg font-semibold">Menu</h1>
+        </div>
+        <button>
           <QrCode className="w-5 h-5 my-2" />
         </button>
       </div>
@@ -47,18 +71,17 @@ export default function Menu() {
       {/* Profile section */}
       <button
         onClick={() => navigate("/switch")}
-        className="w-full p-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3 shadow-sm"
+        className="w-full p-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3"
       >
-        {/* Avatar */}
         <img
           src={user.avatar || "/default-avatar.png"}
           alt={user.name}
           className="rounded-full w-12 h-12 border border-gray-300 shadow-sm"
         />
-
-        {/* Name and handle */}
         <div className="flex-1 flex flex-col">
-          <h4 className="font-semibold text-gray-900 text-base w-0">{user.name}</h4>
+          <h4 className="font-semibold text-gray-900 text-base w-0">
+            {user.name}
+          </h4>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span className="cursor-pointer hover:underline">
               Switch profile
@@ -68,58 +91,80 @@ export default function Menu() {
             </span>
           </div>
         </div>
-
-        {/* Login history badge */}
-        <div className="flex items-center justify-center bg-red-500 text-white font-medium w-6 h-6 rounded-full text-xs shadow">
+        <div className="flex items-center justify-center bg-blue-400 text-white font-medium w-6 h-6 rounded-full text-xs shadow">
           {user.loginCount || 0}
         </div>
       </button>
 
       {/* Settings */}
-      <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
+      <div
+        className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
+        onClick={() => handleNotAvailable("")}
+      >
         <Settings className="w-5 h-5 text-gray-600" />
-        <button>Settings</button>
+        <span>Settings</span>
       </div>
       <div className="border mt-2 bg-black"></div>
 
       {/* Main options */}
       <div className="flex-col">
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
+        <div
+          className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
+          onClick={() => handleNotAvailable("")}
+        >
           <Store className="w-5 h-5 text-gray-600" />
-          <button>Marketplace</button>
+          <span>Marketplace</span>
         </div>
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
+        <div
+          className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
+          onClick={() => handleNotAvailable("")}
+        >
           <Mail className="w-5 h-5 text-gray-600" />
-          <button>Message requests</button>
+          <span>Message requests</span>
         </div>
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
+        <div
+          className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
+          onClick={() => handleNotAvailable("")}
+        >
           <Archive className="w-5 h-5 text-gray-600" />
-          <button>Archive</button>
+          <span>Archive</span>
         </div>
       </div>
 
       {/* More */}
       <label className="text-xs">More</label>
       <div className="flex-col">
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
+        <div
+          className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
+          onClick={() => handleNotAvailable("")}
+        >
           <UserPlus className="w-5 h-5 text-gray-600" />
-          <button>Friend request</button>
+          <span>Friend request</span>
         </div>
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
+        <div
+          className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
+          onClick={() => handleNotAvailable("")}
+        >
           <Bot className="w-5 h-5 text-gray-600" />
-          <button>AI Studio chats</button>
+          <span>AI Studio chats</span>
         </div>
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
+        <div
+          className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
+          onClick={() => handleNotAvailable("")}
+        >
           <PlusCircle className="w-5 h-5 text-gray-600" />
-          <button>Create an AI</button>
+          <span>Create an AI</span>
         </div>
       </div>
 
       {/* Communities */}
       <label className="text-xs">Communities</label>
-      <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
+      <div
+        className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
+        onClick={() => handleNotAvailable("")}
+      >
         <Users className="w-5 h-5 text-gray-600" />
-        <button>Create community</button>
+        <span>Create community</span>
       </div>
 
       {/* Facebook Groups */}
@@ -128,7 +173,7 @@ export default function Menu() {
       </div>
 
       {/* Bottom Navigation */}
-     <BottomNav />
+      <BottomNav />
     </div>
   );
 }
