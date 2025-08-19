@@ -39,16 +39,15 @@ export default function Menu() {
       </button>
       <h1 className="text-lg font-semibold">Menu</h1>
     </div>
-        <button className="flex items-center gap-2 px-3 py-1 bg-blue-500 text-white rounded shadow hover:bg-blue-600 my-2">
-          <QrCode className="w-5 h-5" />
-          QR Code
+        <button >
+          <QrCode className="w-5 h-5 my-2" />
         </button>
       </div>
 
       {/* Profile section */}
       <button
         onClick={() => navigate("/switch")}
-        className="w-full p-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3 shadow-sm border"
+        className="w-full p-3 rounded-lg hover:bg-gray-100 transition flex items-center gap-3 shadow-sm"
       >
         {/* Avatar */}
         <img
@@ -77,7 +76,7 @@ export default function Menu() {
       </button>
 
       {/* Settings */}
-      <div className="my-8 flex items-center gap-2 cursor-pointer hover:underline">
+      <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
         <Settings className="w-5 h-5 text-gray-600" />
         <button>Settings</button>
       </div>
@@ -85,15 +84,15 @@ export default function Menu() {
 
       {/* Main options */}
       <div className="flex-col">
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:underline">
+        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
           <Store className="w-5 h-5 text-gray-600" />
           <button>Marketplace</button>
         </div>
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:underline">
+        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
           <Mail className="w-5 h-5 text-gray-600" />
           <button>Message requests</button>
         </div>
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:underline">
+        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
           <Archive className="w-5 h-5 text-gray-600" />
           <button>Archive</button>
         </div>
@@ -102,15 +101,15 @@ export default function Menu() {
       {/* More */}
       <label className="text-xs">More</label>
       <div className="flex-col">
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:underline">
+        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
           <UserPlus className="w-5 h-5 text-gray-600" />
           <button>Friend request</button>
         </div>
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:underline">
+        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
           <Bot className="w-5 h-5 text-gray-600" />
           <button>AI Studio chats</button>
         </div>
-        <div className="my-8 flex items-center gap-2 cursor-pointer hover:underline">
+        <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
           <PlusCircle className="w-5 h-5 text-gray-600" />
           <button>Create an AI</button>
         </div>
@@ -118,7 +117,7 @@ export default function Menu() {
 
       {/* Communities */}
       <label className="text-xs">Communities</label>
-      <div className="my-8 flex items-center gap-2 cursor-pointer hover:underline">
+      <div className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500">
         <Users className="w-5 h-5 text-gray-600" />
         <button>Create community</button>
       </div>

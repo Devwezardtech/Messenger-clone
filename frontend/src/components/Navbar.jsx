@@ -36,16 +36,22 @@ export default function Navbar() {
 
       {/* Right Side */}
       <div>
-        {token && (
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 bg-red-400 hover:bg-red-500 text-white px-2 py-1 rounded-md transition"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
-        )}
-      </div>
+  {token && (
+    <button
+      onClick={logout}
+      className="group flex items-center gap-2 hover:shadow-sm text-black px-2 py-1 rounded-md transition-all duration-300"
+    >
+      {/* Icon always visible */}
+      <LogOut size={18} />
+
+      {/* Text appears only on hover */}
+      <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300">
+        Logout
+      </span>
+    </button>
+  )}
+</div>
+
     </div>
   );
 }
