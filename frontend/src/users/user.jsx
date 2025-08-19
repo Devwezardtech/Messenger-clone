@@ -243,7 +243,7 @@ export default function Users() {
                       unread ? "font-semibold text-gray-900" : "text-gray-500"
                     }`}
                   >
-                    {last ? preview : "..."}
+                    {last ? preview : "loading..."}
                   </div>
                 </div>
               </div>
