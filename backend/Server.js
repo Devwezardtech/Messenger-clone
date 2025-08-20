@@ -9,42 +9,67 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const messageRoutes = require("./routes/message");
 const Message = require("./models/Message");
-const User = require("./models/User"); // IMPORTANT: import User model
+const User = require("./models/User");
 
 const app = express();
 const server = http.createServer(app);
 
+// Updated CORS configuration for production
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://realtimechat-delta.vercel.app",
+  process.env.CLIENT_ORIGIN
+].filter(Boolean); // Remove undefined values
+
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173", "https://realtimechat-delta.vercel.app/"],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
+
 app.use(express.json());
+
+// Health check route for Render
+app.get("/", (req, res) => {
+  res.json({ message: "Messenger Clone Backend is running!" });
+});
 
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
 
-// DB
+// DB Connection with better error handling
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB error", err));
+  .connect(process.env.MONGO_URI, { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true 
+  })
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
+// Socket.IO configuration
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_ORIGIN || "http://localhost:5173" || "https://realtimechat-delta.vercel.app/", credentials: true },
+  cors: { 
+    origin: allowedOrigins,
+    credentials: true 
+  },
 });
 
 // userId -> socketId map
 const onlineUsers = {};
 
 io.on("connection", (socket) => {
-  //console.log("socket connected:", socket.id);
+  console.log("Socket connected:", socket.id);
 
   socket.on("register", (userId) => {
     onlineUsers[userId] = socket.id;
+    console.log(`User ${userId} registered with socket ${socket.id}`);
 
     // Emit a simplified map: userId -> true
     const statusMap = {};
@@ -102,6 +127,7 @@ io.on("connection", (socket) => {
     if (disconnectedUserId) {
       try {
         await User.findByIdAndUpdate(disconnectedUserId, { lastOnline: new Date() });
+        console.log(`User ${disconnectedUserId} disconnected, updated lastOnline`);
       } catch (err) {
         console.error("Error updating lastOnline:", err);
       }
@@ -117,4 +143,6 @@ io.on("connection", (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on ${PORT}`));
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});

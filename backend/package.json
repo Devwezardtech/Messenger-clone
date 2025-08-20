@@ -1,12 +1,19 @@
 {
-  "name": "backend",
+  "name": "messenger-clone-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "backend/server.js",
+  "description": "Messenger Clone Backend API",
+  "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "build": "echo 'No build step required'"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["messenger", "chat", "socket.io", "express"],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
