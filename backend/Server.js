@@ -16,7 +16,7 @@ const server = http.createServer(app);
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"],
+    origin: ["http://localhost:3000", "http://localhost:5173", "https://realtimechat-delta.vercel.app/"],
     credentials: true,
   })
 );
@@ -34,7 +34,7 @@ mongoose
   .catch((err) => console.error("MongoDB error", err));
 
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_ORIGIN || "http://localhost:5173", credentials: true },
+  cors: { origin: process.env.CLIENT_ORIGIN || "http://localhost:5173" || "https://realtimechat-delta.vercel.app/", credentials: true },
 });
 
 // userId -> socketId map
