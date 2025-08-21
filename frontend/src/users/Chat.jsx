@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../components/api";
 import Navbar from "../components/Navbar";
 import { io } from "socket.io-client";
 import { ArrowLeft, Send } from "lucide-react"; // ✅ Import Lucide icons
@@ -41,8 +41,8 @@ export default function Chat() {
   useEffect(() => {
     const fetchOther = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/user/${otherUserId}`,
+        const res = await api.get(
+          `/api/user/${otherUserId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setOther(res.data);
@@ -58,8 +58,8 @@ export default function Chat() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/message/conversation/${otherUserId}`,
+        const res = await api.get(
+          `/api/message/conversation/${otherUserId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const msgs = res.data || [];
@@ -70,8 +70,8 @@ export default function Chat() {
         );
         if (hasUnseenFromOther) {
           try {
-            await axios.patch(
-              `http://localhost:5000/api/message/seen/${otherUserId}`,
+            await api.patch(
+              `/api/message/seen/${otherUserId}`,
               {},
               { headers: { Authorization: `Bearer ${token}` } }
             );
