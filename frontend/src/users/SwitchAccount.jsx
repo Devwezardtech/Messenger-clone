@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../components/api";
 
 // Lucide icons
 import {
@@ -46,7 +46,7 @@ export default function SwitchAccount() {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await api.post("/api/auth/login", {
         name: selectedAcc.name,
         password: passwordInput,
       });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import api from "../components/api";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
@@ -38,7 +38,7 @@ export default function Users() {
   useEffect(() => {
     const fetchUsersAndLast = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/user", {
+        const res = await api.get("/api/user", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -48,8 +48,8 @@ export default function Users() {
         await Promise.all(
           filtered.map(async (u) => {
             try {
-              const msgRes = await axios.get(
-                `http://localhost:5000/api/message/conversation/${u._id}`,
+              const msgRes = await api.get(
+                `/api/message/conversation/${u._id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
 
@@ -102,8 +102,8 @@ export default function Users() {
     }
 
     try {
-      await axios.put(
-        `http://localhost:5000/api/message/mark-seen/${uId}`,
+      await api.put(
+        `/api/message/mark-seen/${uId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
