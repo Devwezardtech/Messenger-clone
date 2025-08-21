@@ -21,6 +21,8 @@ export default function Chat() {
   const typingTimeoutRef = useRef(null);
   const navigate = useNavigate();
 
+  const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
+
   const myId = me?.id;
 
   // Helper: Convert date to "time ago"
@@ -99,7 +101,7 @@ export default function Chat() {
 
   // Connect socket and listen for events
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000");
+    socketRef.current = io(SOCKET_URL);
     socketRef.current.on("connect", () => {
       socketRef.current.emit("register", myId);
     });
