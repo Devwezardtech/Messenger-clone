@@ -1,7 +1,7 @@
 {
-  "name": "messenger-clone-backend",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "Messenger Clone Backend API",
+  "description": "",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
