@@ -79,7 +79,7 @@ const handleNotAvailable = (feature) => {
           className="rounded-full w-12 h-12 border border-gray-300 shadow-sm lg:w-14 lg:h-14"
         />
         <div className="flex-1 flex flex-col">
-          <h4 className="font-semibold text-gray-900 text-base w-0">
+          <h4 className="font-semibold text-gray-900 text-start w-full">
             {user.name?.length > 14 ? user.name.slice(0, 14) + "..." : user.name}
           </h4>
           <div className="flex items-center gap-2 text-sm text-gray-600 lg:text-md">
