@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../components/api";
 import Navbar from "../components/Navbar";
 import { io } from "socket.io-client";
-import { ArrowLeft, Send } from "lucide-react"; // ✅ Import Lucide icons
+import { ArrowLeft, Send } from "lucide-react"; 
 
 export default function Chat() {
   const { id: otherUserId } = useParams();

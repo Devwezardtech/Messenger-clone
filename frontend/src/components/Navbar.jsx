@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageCircle, LogOut } from "lucide-react"; // lucide icons
 
 export default function Navbar() {
+  const [lg, setLg] = useState(false)
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  const logout = () => {
-    const active = JSON.parse(localStorage.getItem("user") || "null");
-    const stored = JSON.parse(localStorage.getItem("accounts") || "[]");
+ const logout = () => {
+  setLg(true);
+ }
 
+ const confirmLogout = () => {
+   try {
+    const active = JSON.parse(localStorage.getItem("user") || "null");
+   const stored = JSON.parse(localStorage.getItem("accounts") || "[]");
     if (active) {
       // Push logged-out user into history with timestamp
       const updated = [
@@ -23,11 +29,52 @@ export default function Navbar() {
     // Clear active user but keep accounts
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    navigate("/login");
-  };
+    setTimeout(() =>{
+      navigate("/login");
+    }, 500)
+    
+   } catch (error) {
+    console.error("err", error)
+   }
+ }
+
+ const cancelLogout = () => {
+  setLg(false);
+ }
+
+    
+    
+  /*    
+    */
+   
 
   return (
     <div className="w-full py-4 px-6 border-b flex justify-between items-center bg-white shadow-sm">
+
+        {/* Logout Confirmation Modal */}
+      {lg && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+            <h6 className="text-sm font-semibold mb-4">
+              Are you sure you want to logout?
+            </h6>
+            <div className="flex justify-center item-center gap-8">
+              <button
+                onClick={cancelLogout}
+                className="text-sm px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="text-sm px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Logo / Title */}
       <div className="flex items-center gap-2 text-indigo-600">
