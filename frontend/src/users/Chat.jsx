@@ -186,9 +186,12 @@ export default function Chat() {
   };
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <div className="mt-4 max-w-md mx-4">
+   <div>
+<Navbar />
+ <div className="min-h-screen">
+   
+      
+      <div className=" max-w-md mx-4 pt-20">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="relative flex gap-2 items-center">
@@ -270,5 +273,6 @@ export default function Chat() {
         </div>
       </div>
     </div>
+     </div>
   );
 }
