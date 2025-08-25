@@ -61,7 +61,7 @@ const handleNotAvailable = (feature) => {
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
           </button>
-          <h1 className="text-lg lg:text-xl font-semibold">Menu</h1>
+          <h1 className="text-lg lg:text-xl font-semibold px-4">Menu</h1>
         </div>
         <button>
           <QrCode className="w-5 h-5 my-2 lg:w-7 lg:h-7 lg:my-4" />

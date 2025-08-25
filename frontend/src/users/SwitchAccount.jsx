@@ -97,23 +97,23 @@ export default function SwitchAccount() {
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h2 className="text-xl font-bold">Switch Account</h2>
+        <h2 className="text-md md:text-lg lg:text-xl font-bold">Switch Account</h2>
       </div>
 
       {/* Current account */}
       {activeAccount && (
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-600 mb-2">Current</h3>
+          <h3 className="text-sm font-semibold text-gray-600 mb-2  lg:text-md">Current</h3>
           <div className="flex items-center gap-3 rounded-lg p-3 bg-green-50">
             <img
               src={activeAccount.avatar || "/default-avatar.png"}
               alt={activeAccount.name}
-              className="rounded-full w-12 h-12 border"
+              className="rounded-full w-12 h-12 border lg:w-14 lg:h-14"
             />
             <div className="flex flex-col text-left">
-              <h4 className="font-medium">{activeAccount.name}</h4>
+              <h4 className="font-medium">{activeAccount.name?.length > 14 ? activeAccount.name.slice(0, 14) + "..." : activeAccount.name}</h4>
               <span className="text-sm text-gray-500">
-                @{activeAccount.name}
+                @{activeAccount.name?.length > 14 ? activeAccount.name.slice(0, 14) + "..." : activeAccount.name || activeAccount.name?.toLowerCase().length > 14 ? activeAccount.name.slice(0, 14) + "..." : activeAccount.name}
               </span>
               <span className="text-xs text-gray-400">
                 Signed in{" "}
@@ -122,7 +122,7 @@ export default function SwitchAccount() {
                   : "recently"}
               </span>
             </div>
-            <CheckCircle className="ml-auto text-green-600 w-5 h-5" />
+            <CheckCircle className="ml-auto text-green-600 w-5 h-5 " />
           </div>
         </div>
       )}
@@ -130,7 +130,7 @@ export default function SwitchAccount() {
       {/* Other accounts */}
       {otherAccounts.length > 0 && (
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-600 mb-2">
+          <h3 className="text-sm font-semibold text-gray-600 mb-2 lg:text-md">
             Accounts history
           </h3>
           <div className="grid gap-3">
@@ -155,11 +155,11 @@ export default function SwitchAccount() {
                   <img
                     src={acc.avatar || "/default-avatar.png"}
                     alt={acc.name}
-                    className="rounded-full w-12 h-12 border"
+                    className="rounded-full w-12 h-12 border  lg:w-14 lg:h-14"
                   />
                   <div className="flex flex-col">
-                    <h4 className="font-medium">{acc.name}</h4>
-                    <span className="text-sm text-gray-500">@{acc.name}</span>
+                    <h4 className="font-medium">{acc.name?.length > 14 ? acc.name.slice(0, 14) + "..." : acc.name}</h4>
+                    <span className="text-sm text-gray-500"> @{acc.name?.length > 14 ? acc.name.slice(0, 14) + "..." : acc.name || acc.name?.toLowerCase().length > 14 ? acc.name.slice(0, 14) + "..." : acc.name}</span>
                     <span className="text-xs text-gray-400">
                       Last signed in{" "}
                       {acc.lastLogin ? timeAgo(acc.lastLogin) : "previously"}
@@ -168,9 +168,9 @@ export default function SwitchAccount() {
 
                   <div className="ml-auto">
                     {acc.name === currentUser?.name ? (
-                      <CheckCircle className="text-green-600 w-5 h-5" />
+                      <CheckCircle className="text-green-600 w-5 h-5 " />
                     ) : (
-                      <LogIn className="text-blue-500 w-5 h-5" />
+                      <LogIn className="text-blue-300 hover:text-blue-400 w-5 h-5 " />
                     )}
                   </div>
                 </button>
@@ -180,7 +180,7 @@ export default function SwitchAccount() {
                   onClick={() => handleRemove(acc.username)}
                   className="ml-3 text-red-500 hover:text-red-700"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-5 h-5  " />
                 </button>
               </div>
             ))}
