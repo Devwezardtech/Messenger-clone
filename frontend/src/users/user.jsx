@@ -182,7 +182,7 @@ export default function Users() {
 
             {/* Display online users */}
       {Object.keys(onlineUsers).length > 0 && (
-        <div className="px-4 mb-4 mx-1">
+        <div className="px-4 mb-4 mx-1 mt-1 lg:mt-2 max-w-2xl mx-auto">
           <h3 className="text-md font-semibold mb-2 text-start">Online</h3>
           <div className="flex gap-4 overflow-x-auto justify-start">
             {users
@@ -211,7 +211,7 @@ export default function Users() {
 
 
       {/* People list */}
-      <div className="p-4 max-w-2xl mx-auto lg pb-20">
+      <div className="p-4 max-w-2xl mx-auto lg:pb-20">
        
         <h2 className="text-md font-semibold mb-4 md:text-lg lg:text-xl lg:mb-12">People</h2>
 

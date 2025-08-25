@@ -76,14 +76,14 @@ const handleNotAvailable = (feature) => {
         <img
           src={user.avatar || "/default-avatar.png"}
           alt={user.name}
-          className="rounded-full w-12 h-12 border border-gray-300 shadow-sm"
+          className="rounded-full w-12 h-12 border border-gray-300 shadow-sm lg:w-14 lg:h-14"
         />
         <div className="flex-1 flex flex-col">
           <h4 className="font-semibold text-gray-900 text-base w-0">
             {user.name?.length > 14 ? user.name.slice(0, 14) + "..." : user.name}
           </h4>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <span className="cursor-pointer">
+          <div className="flex items-center gap-2 text-sm text-gray-600 lg:text-md">
+            <span className="cursor-pointer lg:text-md">
               Switch profile
             </span>
             <span className="text-gray-400">
@@ -91,7 +91,7 @@ const handleNotAvailable = (feature) => {
             </span>
           </div>
         </div>
-        <div className="flex items-center justify-center bg-blue-400 text-white font-medium w-6 h-6 rounded-full text-xs shadow">
+        <div className="flex items-center justify-center bg-blue-400 text-white font-medium w-6 h-6 rounded-full text-xs shadow lg:w-8 lg:h-8">
           {user.loginCount || 0}
         </div>
       </button>
@@ -102,7 +102,7 @@ const handleNotAvailable = (feature) => {
         onClick={() => handleNotAvailable("")}
       >
         <Settings className="w-5 h-5 text-gray-600" />
-        <span>Settings</span>
+        <span className="md:text-md lg:text-lg">Settings</span>
       </div>
       <div className="border mt-2 bg-black"></div>
 
@@ -113,21 +113,21 @@ const handleNotAvailable = (feature) => {
           onClick={() => handleNotAvailable("")}
         >
           <Store className="w-5 h-5 text-gray-600" />
-          <span>Marketplace</span>
+          <span className="md:text-md lg:text-lg">Marketplace</span>
         </div>
         <div
           className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
           onClick={() => handleNotAvailable("")}
         >
           <Mail className="w-5 h-5 text-gray-600" />
-          <span>Message requests</span>
+          <span className="md:text-md lg:text-lg">Message requests</span>
         </div>
         <div
           className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
           onClick={() => handleNotAvailable("")}
         >
           <Archive className="w-5 h-5 text-gray-600" />
-          <span>Archive</span>
+          <span className="md:text-md lg:text-lg">Archive</span>
         </div>
       </div>
 
@@ -139,21 +139,21 @@ const handleNotAvailable = (feature) => {
           onClick={() => handleNotAvailable("")}
         >
           <UserPlus className="w-5 h-5 text-gray-600" />
-          <span>Friend request</span>
+          <span className="md:text-md lg:text-lg">Friend request</span>
         </div>
         <div
           className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
           onClick={() => handleNotAvailable("")}
         >
           <Bot className="w-5 h-5 text-gray-600" />
-          <span>AI Studio chats</span>
+          <span className="md:text-md lg:text-lg">AI Studio chats</span>
         </div>
         <div
           className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
           onClick={() => handleNotAvailable("")}
         >
           <PlusCircle className="w-5 h-5 text-gray-600" />
-          <span>Create an AI</span>
+          <span className="md:text-md lg:text-lg">Create an AI</span>
         </div>
       </div>
 
@@ -164,7 +164,7 @@ const handleNotAvailable = (feature) => {
         onClick={() => handleNotAvailable("")}
       >
         <Users className="w-5 h-5 text-gray-600" />
-        <span>Create community</span>
+        <span className="md:text-md lg:text-lg">Create community</span>
       </div>
 
       {/* Facebook Groups */}
