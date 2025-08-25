@@ -61,10 +61,10 @@ const handleNotAvailable = (feature) => {
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
           </button>
-          <h1 className="text-lg font-semibold">Menu</h1>
+          <h1 className="text-lg lg:text-xl font-semibold">Menu</h1>
         </div>
         <button>
-          <QrCode className="w-5 h-5 my-2" />
+          <QrCode className="w-5 h-5 my-2 lg:w-7 lg:h-7 lg:my-4" />
         </button>
       </div>
 
@@ -80,14 +80,14 @@ const handleNotAvailable = (feature) => {
         />
         <div className="flex-1 flex flex-col">
           <h4 className="font-semibold text-gray-900 text-base w-0">
-            {user.name}
+            {user.name?.length > 14 ? user.name.slice(0, 14) + "..." : user.name}
           </h4>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span className="cursor-pointer">
               Switch profile
             </span>
             <span className="text-gray-400">
-              @{user.username || user.name?.toLowerCase()}
+              @{user.name?.length > 14 ? user.name.slice(0, 14) + "..." : user.name || user.name?.toLowerCase().length > 14 ? user.name.slice(0, 14) + "..." : user.name}
             </span>
           </div>
         </div>
