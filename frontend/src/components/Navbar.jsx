@@ -49,7 +49,10 @@ export default function Navbar() {
    
 
   return (
-    <div className="w-full py-4 px-6 border-b flex justify-between items-center bg-white shadow-sm">
+    <div>
+
+   
+    
 
         {/* Logout Confirmation Modal */}
       {lg && (
@@ -75,6 +78,9 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+     
+    <div className="fixed w-full py-4 px-6 border-b flex justify-between items-center bg-white shadow-sm z-50">
       
       {/* Logo / Title */}
       <div className="flex items-center gap-2 text-indigo-600">
@@ -101,5 +107,6 @@ export default function Navbar() {
 </div>
 
     </div>
+     </div>
   );
 }

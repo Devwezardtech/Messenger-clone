@@ -16,6 +16,7 @@ export default function Users() {
   const me = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
   const socketRef = useRef(null);
+  const [noMessage, setNoMessage] = useState("Say hi!");
 
   // Connect to socket and get online users list
   useEffect(() => {
@@ -63,6 +64,7 @@ export default function Users() {
             } catch (err) {
               console.error("Error fetching messages for", u._id, err);
               setLastMessages((prev) => ({ ...prev, [u._id]: null }));
+              setNoMessage()//for no message
             }
           })
         );
@@ -122,13 +124,17 @@ export default function Users() {
     : [];
 
   return (
+    <div>
+         <Navbar />
+      
+   
     <div className="min-h-screen">
-      <Navbar />
+     
 
       {/* Search bar */}
-      <div className="relative">
+      <div className="relative justify-center item-center">
         {/* Search bar */}
-<div className="w-full max-w-md mx-auto mt-1">
+<div className="w-full max-w-lg mx-auto mt-1 pt-20">
   <div className="relative mx-4">
     {/* Icon inside input */}
     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -139,7 +145,7 @@ export default function Users() {
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
       className="w-full  rounded-lg border border-gray-300 bg-white pl-10 pr-4 py-2 text-sm 
-                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 shadow-sm"
     />
   </div>
 </div>
@@ -147,7 +153,8 @@ export default function Users() {
 
         {/* Search results dropdown */}
         {searchQuery && (
-          <div className="absolute top-11 left-3 right-3 bg-white shadow-sm border rounded-md z-50 max-h-64 overflow-y-auto">
+          <div>
+          <div className="absolute top-11 left-3 right-3 bg-white shadow-sm border rounded-md z-50 max-h-64 overflow-y-auto max-w-lg">
             {filteredUsers.length > 0 ? (
               filteredUsers.map((u) => (
                 <div
@@ -168,6 +175,7 @@ export default function Users() {
             ) : (
               <div className="p-2 text-gray-500 text-sm">No users found</div>
             )}
+          </div>
           </div>
         )}
       </div>
@@ -203,8 +211,9 @@ export default function Users() {
 
 
       {/* People list */}
-      <div className="p-4 max-w-2xl mx-auto">
-        <h2 className="text-lg font-semibold mb-4">People</h2>
+      <div className="p-4 max-w-2xl mx-auto lg pb-20">
+       
+        <h2 className="text-md font-semibold mb-4 md:text-lg lg:text-xl lg:mb-12">People</h2>
 
         <div className="grid grid-cols-1 gap-3">
           {users.map((u) => {
@@ -214,19 +223,19 @@ export default function Users() {
               ? last.text.length > 50
                 ? last.text.slice(0, 47) + "..."
                 : last.text
-              : "Say hi!";
+              : "loading...";
 
             return (
               <div
                 key={u._id}
                 onClick={() => handleOpenChat(u._id, last)}
-                className="cursor-pointer py-3 px-1 rounded flex items-center gap-3 hover:bg-gray-50"
+                className="cursor-pointer py-3 px-1 rounded flex items-center gap-3 hover:bg-gray-50 lg:gap-12 lg:py-4 lg:px-2"
               >
                 <div className="relative">
                   <img
                     src={u.avatar || "/default-avatar.png"}
                     alt={u.name}
-                    className="w-12 h-12 rounded-full border"
+                    className="w-12 h-12 rounded-full border lg:w-16 lg:h-16"
                   />
                   {onlineUsers[u._id] ? (
                     <span className="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
@@ -239,11 +248,11 @@ export default function Users() {
                 <div>
                   <div className="font-medium">{u.name}</div>
                   <div
-                    className={`text-sm ${
+                    className={`text-sm md:text-md lg:text-lg ${
                       unread ? "font-semibold text-gray-900" : "text-gray-500"
                     }`}
                   >
-                    {last ? preview : "loading..."}
+                    {last ? preview : noMessage}
                   </div>
                 </div>
               </div>
@@ -257,5 +266,7 @@ export default function Users() {
 
 
     </div>
+     </div>
+  
   );
 }
