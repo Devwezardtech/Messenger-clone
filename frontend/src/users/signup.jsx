@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 export default function Register() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [photo, setPhoto] = useState(null);
+  const [avatar, setAvatar] = useState(null);
   const navigate = useNavigate();
 
   const uploadPhoto = async (file) => {
@@ -22,13 +22,13 @@ export default function Register() {
 
   const submit = async (e) => {
     e.preventDefault();
-    try {
-      let photoUrl = "";
-      if (photo) {
-        photoUrl = await uploadPhoto(photo);
-      }
+     try {
+    let avatarUrl = "";
+    if (avatar) {
+      avatarUrl = await uploadPhoto(avatar);
+    }
 
-      await api.post("/api/auth/register", { name, password, photo: photoUrl });
+      await api.post("/api/auth/register", { name, password, avatar: avatarUrl });
 
       alert("Registered. Please login.");
       navigate("/login");
@@ -56,7 +56,7 @@ export default function Register() {
         />
         <input
           type="file"
-          onChange={(e) => setPhoto(e.target.files[0])}
+          onChange={(e) => setAvatar(e.target.files[0])}
           className="w-full mb-4 border px-3 py-2 rounded"
         />
         <button className="w-full bg-blue-600 text-white py-2 rounded">

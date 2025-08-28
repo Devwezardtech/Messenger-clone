@@ -8,15 +8,15 @@ const upload = require("../middleware/multer");
 // Register
 router.post("/register", async (req, res) => {
   try {
-    const { name, password, photo} = req.body;
-    if (!name || !password || !photo) return res.status(400).json({ message: "Name, password and photo is required" });
+    const { name, password, avatar} = req.body;
+    if (!name || !password || !avatar) return res.status(400).json({ message: "Name, password and photo is required" });
 
     const exists = await User.findOne({ name });
     if (exists) return res.status(400).json({ message: "User already exists" });
 
     const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, password: hashed, photo });
-    return res.status(201).json({ id: user._id, name: user.name  });
+    const user = await User.create({ name, password: hashed, avatar });
+    return res.status(201).json({ id: user._id, name: user.name, avatar: user.avatar });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });
