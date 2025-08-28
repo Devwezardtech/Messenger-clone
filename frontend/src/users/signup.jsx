@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import api from "../components/api";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios"; // make sure axios is installed
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -14,7 +13,7 @@ export default function Register() {
     formData.append("file", file);
 
     // uploads to Cloudinary
-    const res = await axios.post("http://localhost:5000/api/auth/upload", formData, {
+    const res = await api.post("/api/auth/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
