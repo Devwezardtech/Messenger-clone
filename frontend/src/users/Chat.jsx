@@ -194,7 +194,7 @@ export default function Chat() {
 
   
       
-      <div className="w-full max-w-md  mx-4 pt-20 lg:max-w-full lg:mx-80">
+      <div className="w-full max-w-md  px-4 pt-20 lg:max-w-full lg:mx-80">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="relative flex gap-2 items-center">
@@ -227,7 +227,7 @@ export default function Chat() {
         {/* Messages */}
         <div
           ref={messagesRef}
-          className="border-t rounded p-3 h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide mb-20 space-y-3 mx-auto"
+          className="p-3 h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide mb-20 space-y-3 mx-auto"
         >
           {messages.map((m) => {
             const mine = m.senderId === myId;
@@ -260,7 +260,7 @@ export default function Chat() {
         </div>
 
         {/* Fixed Input */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex items-center gap-2 max-w-md mx-auto">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex items-center gap-2 max-w-md mx-auto lg:max-w-full lg:mx-80">
           <input
             value={text}
             onChange={handleTyping}
