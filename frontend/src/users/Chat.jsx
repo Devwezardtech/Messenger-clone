@@ -188,10 +188,13 @@ export default function Chat() {
   return (
    <div>
 <Navbar />
- <div className="min-h-screen">
+ <div className="min-h-screen flex justify-center">
+
    
+
+  
       
-      <div className=" max-w-md mx-4 pt-20">
+      <div className="w-full max-w-md  mx-4 pt-20 lg:max-w-full lg:mx-80">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="relative flex gap-2 items-center">
@@ -201,14 +204,14 @@ export default function Chat() {
             <img
               src={other?.avatar || "/default-avatar.png"}
               alt={other?.name}
-              className="w-12 h-12 rounded-full border"
+              className="w-12 h-12 rounded-full border lg:w-16 lg:h-16"
             />
             {isOnline && (
               <span className="absolute bottom-0 left-10 block w-3 h-3 bg-green-500 rounded-full border border-white"></span>
             )}
           </div>
           <div>
-            <div className="font-medium">{other?.name || "Loading..."}</div>
+            <div className="font-medium lg:text-xl">{other?.name || "Loading..."}</div>
             <div className="text-sm text-gray-500">
               {isTyping
                 ? "Typing..."
@@ -224,7 +227,7 @@ export default function Chat() {
         {/* Messages */}
         <div
           ref={messagesRef}
-          className="border-t rounded p-3 h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide mb-20 space-y-3"
+          className="border-t rounded p-3 h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide mb-20 space-y-3 mx-auto"
         >
           {messages.map((m) => {
             const mine = m.senderId === myId;
@@ -236,7 +239,7 @@ export default function Chat() {
                 {!mine && (
                   <img
                     src={other?.avatar || "/default-avatar.png"}
-                    className="w-8 h-8 rounded-full mr-2"
+                    className="w-8 h-8 rounded-full mr-2 lg:w-10 lg:h-10"
                   />
                 )}
                 <div
@@ -274,5 +277,6 @@ export default function Chat() {
       </div>
     </div>
      </div>
+      
   );
 }
