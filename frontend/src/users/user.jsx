@@ -211,7 +211,7 @@ export default function Users() {
 
 
       {/* People list */}
-      <div className="p-4 max-w-2xl mx-auto lg:pb-20">
+      <div className="p-4 max-w-2xl mx-auto lg:pb-20 pb-24">
        
         <h2 className="text-md font-semibold mb-4 md:text-lg lg:text-xl lg:mb-12">People</h2>
 
@@ -246,7 +246,7 @@ export default function Users() {
                   )}
                 </div>
                 <div>
-                  <div className="font-medium">{u.name}</div>
+                  <div className="font-medium">{u.name?.length > 24 ? u.name.slice(0, 14) + "..." : u.name}</div>
                   <div
                     className={`text-sm md:text-md lg:text-lg ${
                       unread ? "font-semibold text-gray-900" : "text-gray-500"
