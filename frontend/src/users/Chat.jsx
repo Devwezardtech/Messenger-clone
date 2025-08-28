@@ -227,7 +227,7 @@ export default function Chat() {
         {/* Messages */}
         <div
           ref={messagesRef}
-          className="p-3 h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide mb-20 space-y-3 mx-auto"
+          className="p-3 h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide space-y-3 mx-auto"
         >
           {messages.map((m) => {
             const mine = m.senderId === myId;
@@ -260,12 +260,13 @@ export default function Chat() {
         </div>
 
         {/* Fixed Input */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex items-center gap-2 max-w-md mx-auto lg:max-w-full lg:mx-80">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-2">
+        <div className="flex items-center gap-2 max-w-md mx-auto lg:max-w-full lg:mx-80">
           <input
             value={text}
             onChange={handleTyping}
             placeholder="Type a message..."
-            className="flex-grow border px-3 py-2 rounded"
+            className="flex-grow border px-3 py-2 rounded-xl"
           />
           <button
             onClick={send}
@@ -276,6 +277,7 @@ export default function Chat() {
         </div>
       </div>
     </div>
+     </div>
      </div>
       
   );
