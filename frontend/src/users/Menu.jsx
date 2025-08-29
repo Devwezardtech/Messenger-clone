@@ -38,9 +38,13 @@ const handleNotAvailable = (feature) => {
 };
 
 
+
+
   if (!user) {
     return <div className="p-4">Loading...</div>;
   }
+
+
 
   return (
     <div className="my-4 mx-8 relative">
@@ -57,7 +61,7 @@ const handleNotAvailable = (feature) => {
         <div className="flex items-center bg-gray-100">
           <button
             className="text-gray-700 hover:text-black"
-            onClick={() => navigate(-1)}
+            onClick={()=>{navigate(-1)}}
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
           </button>

@@ -47,27 +47,27 @@ export default function Users() {
         setUsers(filtered);
 
         await Promise.all(
-          filtered.map(async (u) => {
-            try {
-              const msgRes = await api.get(
-                `/api/message/conversation/${u._id}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-              );
+  filtered.map(async (u) => {
+    try {
+      const msgRes = await api.get(`/api/message/conversation/${u._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-              const msgs = msgRes.data || [];
-              const last = msgs.length > 0 ? msgs[msgs.length - 1] : null;
+      const msgs = msgRes.data || [];
+      return { id: u._id, last: msgs.length > 0 ? msgs[msgs.length - 1] : null };
+    } catch (err) {
+      console.error("Error fetching messages for", u._id, err);
+      return { id: u._id, last: null };
+    }
+  })
+).then((results) => {
+  const mapped = {};
+  results.forEach(({ id, last }) => {
+    mapped[id] = last;
+  });
+  setLastMessages(mapped); // only one update, no flicker
+});
 
-              setLastMessages((prev) => ({
-                ...prev,
-                [u._id]: last,
-              }));
-            } catch (err) {
-              console.error("Error fetching messages for", u._id, err);
-              setLastMessages((prev) => ({ ...prev, [u._id]: null }));
-              setNoMessage()//for no message
-            }
-          })
-        );
       } catch (err) {
         console.error(err);
       }

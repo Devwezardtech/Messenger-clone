@@ -11,6 +11,11 @@ router.post("/", auth, async (req, res) => {
     if (!receiverId || !text) return res.status(400).json({ message: "Receiver and text required" });
 
     const message = await Message.create({ senderId, receiverId, text });
+
+    // Populate sender and receiver info
+    message = await message.populate("senderId", "name avatar")
+    .populate("receiverId", "name avatar");
+
     res.status(201).json(message);
   } catch (err) {
     console.error(err);
@@ -29,7 +34,9 @@ router.get("/conversation/:otherUserId", auth, async (req, res) => {
         { senderId: user1, receiverId: user2 },
         { senderId: user2, receiverId: user1 }
       ]
-    }).sort({ createdAt: 1 });
+    }).sort({ createdAt: 1 })
+    .populate("senderId", "name avatar")
+    .populate("receiverId", "name avatar");
 
     res.json(messages);
   } catch (err) {
