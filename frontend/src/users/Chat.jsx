@@ -230,7 +230,7 @@ export default function Chat() {
           className="p-3 h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide space-y-3 mx-auto"
         >
           {messages.map((m) => {
-            const mine = m.senderId === myId;
+            const mine = String(m.senderId) === String(myId);
             return (
               <div
                 key={m._id || `${m.senderId}-${m.receiverId}-${m.createdAt}`}
