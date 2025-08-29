@@ -58,7 +58,6 @@ export default function Users() {
     } catch (err) {
       console.error("Error fetching messages for", u._id, err);
       return { id: u._id, last: null };
-      
     }
   })
 ).then((results) => {
@@ -67,11 +66,11 @@ export default function Users() {
     mapped[id] = last;
   });
   setLastMessages(mapped); // only one update, no flicker
-
 });
 
       } catch (err) {
         console.error(err);
+        setNoMessage();
       }
     };
 
@@ -113,7 +112,6 @@ export default function Users() {
       );
     } catch (err) {
       console.error("Error marking messages seen:", err);
-      setNoMessage();
     }
 
     navigate(`/chat/${uId}`);
