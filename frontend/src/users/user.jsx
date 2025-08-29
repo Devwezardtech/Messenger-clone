@@ -113,6 +113,7 @@ export default function Users() {
       );
     } catch (err) {
       console.error("Error marking messages seen:", err);
+      setNoMessage();
     }
 
     navigate(`/chat/${uId}`);
