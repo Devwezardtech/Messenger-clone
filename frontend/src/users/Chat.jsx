@@ -229,34 +229,33 @@ export default function Chat() {
           ref={messagesRef}
           className="p-3 h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide space-y-3 mx-auto"
         >
-          {messages.map((m) => {
-            const mine = String(m.senderId) === String(myId);
-            return (
-              <div
-                key={m._id || `${m.senderId}-${m.receiverId}-${m.createdAt}`}
-                className={`flex ${mine ? "justify-end" : "justify-start"}`}
-              >
-                {!mine && (
-                  <img
-                    src={other?.avatar || "/default-avatar.png"}
-                    className="w-8 h-8 rounded-full mr-2 lg:w-10 lg:h-10"
-                  />
-                )}
-                <div
-                  className={`px-3 py-2 rounded-lg max-w-[70%] ${
-                    mine
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                  {m.text}
-                  <div className="text-xs text-gray-500 mt-1">
-                    {new Date(m.createdAt).toLocaleTimeString()}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        {messages.map((m) => {
+  const mine = String(m.senderId?._id || m.senderId) === String(myId);
+  return (
+    <div
+      key={m._id || `${m.senderId}-${m.receiverId}-${m.createdAt}`}
+      className={`flex ${mine ? "justify-end" : "justify-start"}`}
+    >
+      {!mine && (
+        <img
+          src={other?.avatar || "/default-avatar.png"}
+          className="w-8 h-8 rounded-full mr-2 lg:w-10 lg:h-10"
+        />
+      )}
+      <div
+        className={`px-3 py-2 rounded-lg max-w-[70%] ${
+          mine ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
+        }`}
+      >
+        {m.text}
+        <div className="text-xs text-gray-500 mt-1">
+          {new Date(m.createdAt).toLocaleTimeString()}
+        </div>
+      </div>
+    </div>
+  );
+})}
+
         </div>
 
         {/* Fixed Input */}
