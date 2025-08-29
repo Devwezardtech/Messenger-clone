@@ -247,14 +247,25 @@ export default function Users() {
                   )}
                 </div>
                 <div>
-                  <div className="font-medium">{u.name?.length > 24 ? u.name.slice(0, 14) + "..." : u.name}</div>
-                  <div
-                    className={`text-sm md:text-md lg:text-lg ${
-                      unread ? "font-semibold text-gray-900" : "text-gray-500"
-                    }`}
-                  >
-                    {last ? preview : noMessage}
-                  </div>
+                  <div className="font-medium">
+  {u.name?.length > 24 ? u.name.slice(0, 14) + "..." : u.name}
+</div>
+<div
+  className={`text-sm md:text-md lg:text-lg ${
+    last?.senderId === me.id
+      ? "text-gray-500"
+      : unread
+      ? "font-semibold text-gray-900"
+      : "text-gray-500"
+  }`}
+>
+  {last
+    ? last.senderId === me.id
+      ? `You: ${preview}`
+      : preview
+    : noMessage}
+</div>
+
                 </div>
               </div>
             );
