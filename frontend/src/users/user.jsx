@@ -46,42 +46,38 @@ export default function Users() {
         const filtered = res.data.filter((u) => u._id !== me.id);
         setUsers(filtered);
 
-        await Promise.all(
+        const msgsMap = {};
+await Promise.all(
   filtered.map(async (u) => {
     try {
       const msgRes = await api.get(`/api/message/conversation/${u._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       const msgs = msgRes.data || [];
-      return { id: u._id, last: msgs.length > 0 ? msgs[msgs.length - 1] : null };
+      msgsMap[u._id] = msgs.length ? msgs[msgs.length - 1] : null;
     } catch (err) {
       console.error("Error fetching messages for", u._id, err);
-      return { id: u._id, last: null };
+      msgsMap[u._id] = null;
     }
   })
-).then((results) => {
-  const mapped = {};
-  results.forEach(({ id, last }) => {
-    mapped[id] = last;
-  });
-  setLastMessages(mapped); // only one update, no flicker
-});
+);
+setLastMessages(msgsMap);
 
       } catch (err) {
         console.error(err);
-        setNoMessage();
+        setNoMessage("Say hi!")//for no message
       }
     };
 
     fetchUsersAndLast();
   }, [token, me]);
 
-  const isUnread = (uId) => {
-    const last = lastMessages[uId];
-    if (!last) return false;
-    return last.senderId !== me.id && last.seen === false;
-  };
+const isUnread = (uId) => {
+  const last = lastMessages[uId] || {};
+  return last.receiverId === me.id && last.senderId === uId && !last.seen;
+};
+
+
 
   const formatLastSeen = (timestamp) => {
     if (!timestamp) return "";
@@ -97,25 +93,27 @@ export default function Users() {
   };
 
   const handleOpenChat = async (uId, last) => {
-    if (last && last.senderId !== me.id && !last.seen) {
-      setLastMessages((prev) => ({
-        ...prev,
-        [uId]: { ...last, seen: true },
-      }));
-    }
+  if (last && last.senderId !== me.id && !last.seen) {
+    const updatedLast = { ...last, seen: true };
+    setLastMessages((prev) => ({
+      ...prev,
+      [uId]: updatedLast,
+    }));
 
     try {
       await api.put(
         `/api/message/mark-seen/${uId}`,
-        {},
+        {}, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (err) {
       console.error("Error marking messages seen:", err);
     }
+  }
 
-    navigate(`/chat/${uId}`);
-  };
+  navigate(`/chat/${uId}`);
+};
+
 
   // Filtered users for search
   const filteredUsers = searchQuery
@@ -221,10 +219,11 @@ export default function Users() {
             const last = lastMessages[u._id];
             const unread = isUnread(u._id);
             const preview = last
-              ? last.text.length > 50
-                ? last.text.slice(0, 47) + "..."
-                : last.text
-              : "loading...";
+  ? last.text.length > 50
+    ? last.text.slice(0, 47) + "..."
+    : last.text
+  : noMessage;
+
 
             return (
               <div
@@ -247,25 +246,14 @@ export default function Users() {
                   )}
                 </div>
                 <div>
-                  <div className="font-medium">
-  {u.name?.length > 24 ? u.name.slice(0, 14) + "..." : u.name}
-</div>
-<div
-  className={`text-sm md:text-md lg:text-lg ${
-    last?.senderId === me.id
-      ? "text-gray-500"
-      : unread
-      ? "font-semibold text-gray-900"
-      : "text-gray-500"
-  }`}
->
-  {last
-    ? last.senderId === me.id
-      ? `You: ${preview}`
-      : preview
-    : noMessage}
-</div>
-
+                  <div className="font-medium">{u.name?.length > 24 ? u.name.slice(0, 14) + "..." : u.name}</div>
+                  <div
+                    className={`text-sm md:text-md lg:text-lg ${
+                      unread ? "font-semibold text-gray-900" : "text-gray-500"
+                    }`}
+                  >
+                    {last ? preview : noMessage}
+                  </div>
                 </div>
               </div>
             );

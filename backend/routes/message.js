@@ -15,7 +15,7 @@ router.post("/", auth, async (req, res) => {
     // Populate sender and receiver info
     message = await message.populate("senderId", "name avatar")
     .populate("receiverId", "name avatar");
-
+    
     res.status(201).json(message);
   } catch (err) {
     console.error(err);
