@@ -15,6 +15,9 @@ router.post("/", auth, async (req, res) => {
     // Populate sender and receiver info
     message = await message.populate("senderId", "name avatar")
     .populate("receiverId", "name avatar");
+
+        req.io.to(receiverId.toString()).emit("newMessage", message);
+    req.io.to(senderId.toString()).emit("newMessage", message);
     
     res.status(201).json(message);
   } catch (err) {

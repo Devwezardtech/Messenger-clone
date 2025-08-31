@@ -32,6 +32,21 @@ export default function Users() {
       setOnlineUsers(onlineList);
     });
 
+    socketRef.current.on("receiveMessage", (msg) => {
+  setLastMessages((prev) => ({
+    ...prev,
+    [msg.senderId === me.id ? msg.receiverId : msg.senderId]: msg,
+  }));
+});
+
+socketRef.current.on("messageSaved", (msg) => {
+  setLastMessages((prev) => ({
+    ...prev,
+    [msg.receiverId]: msg, // sender sees own sent msg
+  }));
+});
+
+
     return () => {
       socketRef.current.disconnect();
     };
@@ -295,12 +310,13 @@ const isUnread = (uId) => {
                 <div>
                   <div className="font-medium">{u.name?.length > 32 ? u.name.slice(0, 14) + "..." : u.name}</div>
                   <div
-                    className={`text-sm md:text-md lg:text-lg ${
-                      unread ? "font-semibold text-gray-900" : "text-gray-500"
-                    }`}
-                  >
-                    {last ? preview : noMessage}
-                  </div>
+  className={`text-sm md:text-md lg:text-lg ${
+    unread ? "font-semibold text-gray-900" : "text-gray-500"
+  }`}
+>
+  {last ? preview : noMessage}
+</div>
+
                 </div>
               </div>
               
