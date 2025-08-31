@@ -11,7 +11,7 @@ export default function BottomNav({ users = [], isUnread }) {
   const toMenu = () => navigate("/users/menu");
 
   return (
-    <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t shadow-md p-3 flex justify-around">
+    <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t shadow-md p-1 flex justify-around">
       {/* Chats button */}
       <button
         className={`relative flex flex-col items-center gap-1 px-6 py-2 ${

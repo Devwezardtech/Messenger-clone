@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../components/api";
 import Navbar from "../components/Navbar";
 import { io } from "socket.io-client";
-import { ArrowLeft, Send } from "lucide-react"; 
+import { ArrowLeft, Loader, Send } from "lucide-react"; 
 
 export default function Chat() {
   const { id: otherUserId } = useParams();
@@ -188,11 +188,8 @@ export default function Chat() {
   return (
    <div>
 <Navbar />
+
  <div className="min-h-screen flex justify-center">
-
-   
-
-  
       
       <div className="w-full max-w-md  px-4 pt-20 lg:max-w-full lg:mx-80">
         {/* Header */}

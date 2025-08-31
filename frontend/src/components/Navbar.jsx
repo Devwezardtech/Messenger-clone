@@ -85,7 +85,7 @@ export default function Navbar() {
       {/* Logo / Title */}
       <div className="flex items-center gap-2 text-indigo-600">
         <MessageCircle size={22} />
-        <h1 className="font-bold text-lg">RealTime Chat</h1>
+        <h1 className="font-bold text-lg animate-f">RealTime Chat</h1>
       </div>
 
       {/* Right Side */}

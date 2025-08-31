@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import api from "../components/api";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
-import { MessageSquare, Menu, Search, CircleUserRound } from "lucide-react";
+import { MessageSquare, Menu, Search, CircleUserRound, Loader } from "lucide-react";
 import BottomNav from "../components/BottomNav";
 
 
@@ -11,16 +11,18 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [lastMessages, setLastMessages] = useState({});
   const [onlineUsers, setOnlineUsers] = useState({});
-  const [searchQuery, setSearchQuery] = useState(""); // NEW
+  const [searchQuery, setSearchQuery] = useState(""); 
   const token = localStorage.getItem("token");
   const me = JSON.parse(localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
   const socketRef = useRef(null);
   const [noMessage, setNoMessage] = useState("Say hi!");
+  const [loading, setLoading] = useState(true)
 
   // Connect to socket and get online users list
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000");
+    const forSocket = import.meta.env.REACT_APP_SOCKET_URL || "http://localhost:5000" // url for mentain code
+    socketRef.current = io(forSocket);
 
     socketRef.current.on("connect", () => {
       socketRef.current.emit("register", me.id);
@@ -38,6 +40,7 @@ export default function Users() {
   // Fetch users & last messages
   useEffect(() => {
     const fetchUsersAndLast = async () => {
+      setLoading(true);
       try {
         const res = await api.get("/api/user", {
           headers: { Authorization: `Bearer ${token}` },
@@ -67,10 +70,12 @@ setLastMessages(msgsMap);
         console.error(err);
         setNoMessage("Say hi!")//for no message
       }
+      finally{
+        setLoading(false)
+      }
     };
-
     fetchUsersAndLast();
-  }, [token, me]);
+  }, [token, me.id]);
 
 const isUnread = (uId) => {
   const last = lastMessages[uId] || {};
@@ -122,8 +127,11 @@ const isUnread = (uId) => {
       )
     : [];
 
+    
+
   return (
     <div>
+
          <Navbar />
       
    
@@ -153,7 +161,7 @@ const isUnread = (uId) => {
         {/* Search results dropdown */}
         {searchQuery && (
           <div>
-          <div className="absolute top-11 left-3 right-3 bg-white shadow-sm border rounded-md z-50 max-h-64 overflow-y-auto max-w-lg">
+          <div className="absolute mt-1 left-4 right-4 bg-white shadow-sm border rounded-md z-50 max-h-64 overflow-y-auto max-w-lg">
             {filteredUsers.length > 0 ? (
               filteredUsers.map((u) => (
                 <div
@@ -173,16 +181,30 @@ const isUnread = (uId) => {
               ))
             ) : (
               <div className="p-2 text-gray-500 text-sm">No users found</div>
+              
+              
             )}
           </div>
           </div>
         )}
       </div>
 
-            {/* Display online users */}
-      {Object.keys(onlineUsers).length > 0 && (
+           {loading ? (
+            <div className="px-5 mb-2 mx-1 mt-1 lg:mt-2 max-w-2xl mx-auto ">
+    <div className="bg-gray-200 h-6 w-16 mb-2 rounded-md"></div>
+    <div className="flex gap-9 justify-start animate-pulse">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="flex flex-col items-center">
+          <div className="w-14 h-14 rounded-full bg-gray-200"></div>
+          <div className="w-14 h-4 mt-1 bg-gray-200 rounded"></div>
+        </div>
+      ))}
+    </div>
+  </div>
+) : (   
+      Object.keys(onlineUsers).length > 0 ? (
         <div className="px-4 mb-4 mx-1 mt-1 lg:mt-2 max-w-2xl mx-auto">
-          <h3 className="text-md font-semibold mb-2 text-start">Online</h3>
+          
           <div className="flex gap-4 overflow-x-auto justify-start">
             {users
               .filter((u) => onlineUsers[u._id]) // only online
@@ -192,6 +214,7 @@ const isUnread = (uId) => {
                   onClick={() => handleOpenChat(u._id, lastMessages[u._id])}
                   className="flex flex-col items-center cursor-pointer"
                 >
+                  <h3 className="text-md font-semibold mb-2 text-start">Online</h3> 
                   <div className="relative">
                     <img
                       src={u.avatar || "/default-avatar.png"}
@@ -206,13 +229,38 @@ const isUnread = (uId) => {
               ))}
           </div>
         </div>
-      )}
+      ) : (
+        <div></div>
+      )
+    )}
 
 
       {/* People list */}
       <div className="p-4 max-w-2xl mx-auto lg:pb-20 pb-24">
-       
-        <h2 className="text-md font-semibold mb-4 md:text-lg lg:text-xl lg:mb-12">People</h2>
+        
+
+          {loading ? (
+            <div>
+
+              <div className="bg-gray-200 w-24 h-8 rounded-md mb-4 animate-pulse"></div>
+    <div className="space-y-7">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          className="flex items-center gap-5 animate-pulse"
+        >
+          <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-gray-200"></div>
+          <div className="flex-1 space-y-2">
+            <div className="w-32 h-4 bg-gray-200 rounded"></div>
+            <div className="w-24 h-3 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+    </div>
+  ) : (
+    <div>
+          <h2 className="text-md font-semibold mb-4 md:text-lg lg:text-xl lg:mb-12">People</h2>
 
         <div className="grid grid-cols-1 gap-3">
           {users.map((u) => {
@@ -256,10 +304,14 @@ const isUnread = (uId) => {
                   </div>
                 </div>
               </div>
+              
             );
           })}
         </div>
-      </div>
+        </div>
+  )}
+        </div>
+      
 
 {/* Bottom nav */}
 <BottomNav users={users} isUnread={isUnread} />
