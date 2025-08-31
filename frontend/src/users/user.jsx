@@ -223,7 +223,7 @@ const isUnread = (uId) => {
                     {/* Green dot indicator */}
                     <span className="absolute bottom-1 right-1 block w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
                   </div>
-                  <div className="text-xs mt-1 font-medium">{u.name?.length > 10 ? u.name.slice(0, 14) + "..." : u.name}</div>
+                  <div className="text-xs mt-1 font-medium">{u.name?.length > 8 ? u.name.slice(0, 14) + "..." : u.name}</div>
                 </div>
               ))}
           </div>
@@ -293,7 +293,7 @@ const isUnread = (uId) => {
                   )}
                 </div>
                 <div>
-                  <div className="font-medium">{u.name?.length > 24 ? u.name.slice(0, 14) + "..." : u.name}</div>
+                  <div className="font-medium">{u.name?.length > 32 ? u.name.slice(0, 14) + "..." : u.name}</div>
                   <div
                     className={`text-sm md:text-md lg:text-lg ${
                       unread ? "font-semibold text-gray-900" : "text-gray-500"
