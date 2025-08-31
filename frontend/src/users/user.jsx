@@ -159,34 +159,33 @@ const isUnread = (uId) => {
 
 
         {/* Search results dropdown */}
-        {searchQuery && (
-          <div>
-          <div className="absolute mt-1 left-4 right-4 bg-white shadow-sm border rounded-md z-50 max-h-64 overflow-y-auto max-w-lg">
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((u) => (
-                <div
-                  key={u._id}
-                  onClick={() => handleOpenChat(u._id, lastMessages[u._id])}
-                  className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  <img
-                    src={u.avatar || "/default-avatar.png"}
-                    alt={u.name}
-                    className="w-10 h-10 rounded-full border"
-                  />
-                  <div>
-                    <div className="font-medium">{u.name}</div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="p-2 text-gray-500 text-sm">No users found</div>
-              
-              
-            )}
+   {searchQuery && (
+  <div className="absolute mt-1 w-full flex justify-center">
+    <div className="bg-white shadow-sm border rounded-md z-50 max-h-64 overflow-y-auto scrollbar-hide w-[93%] md:w-[485px]">
+      {filteredUsers.length > 0 ? (
+        filteredUsers.map((u) => (
+          <div
+            key={u._id}
+            onClick={() => handleOpenChat(u._id, lastMessages[u._id])}
+            className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
+          >
+            <img
+              src={u.avatar || "/default-avatar.png"}
+              alt={u.name}
+              className="w-10 h-10 rounded-full border"
+            />
+            <div>
+              <div className="font-medium">{u.name}</div>
+            </div>
           </div>
-          </div>
-        )}
+        ))
+      ) : (
+        <div className="p-2 text-gray-500 text-sm">No users found</div>
+      )}
+    </div>
+  </div>
+)}
+
       </div>
 
            {loading ? (
