@@ -21,8 +21,8 @@ export default function Users() {
 
   // Connect to socket and get online users list
   useEffect(() => {
-    const forSocket = import.meta.env.REACT_APP_SOCKET_URL || "http://localhost:5000" // url for mentain code
-    socketRef.current = io(forSocket);
+    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000" // url for mentain code
+    socketRef.current = io(SOCKET_URL);
 
     socketRef.current.on("connect", () => {
       socketRef.current.emit("register", me.id);
