@@ -38,6 +38,10 @@ const handleNotAvailable = (feature) => {
 };
 
 
+const goTOSettings = () => {
+  navigate("/setting");
+}
+
 
 
   if (!user) {
@@ -103,7 +107,7 @@ const handleNotAvailable = (feature) => {
       {/* Settings */}
       <div
         className="my-8 flex items-center gap-2 cursor-pointer hover:text-blue-500"
-        onClick={() => handleNotAvailable("")}
+        onClick={goTOSettings}
       >
         <Settings className="w-5 h-5 text-gray-600" />
         <span className="md:text-md lg:text-lg">Settings</span>

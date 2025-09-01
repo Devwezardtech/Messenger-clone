@@ -67,17 +67,30 @@ const onlineUsers = {};
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
 
-  socket.on("register", (userId) => {
-    onlineUsers[userId] = socket.id;
-    console.log(`User ${userId} registered with socket ${socket.id}`);
+  socket.on("register", async (userId) => {
+  if (!userId || userId === "null") {
+    console.warn(`⚠️ Invalid register attempt from socket ${socket.id}`);
+    return;
+  }
 
-    // Emit a simplified map: userId -> true
-    const statusMap = {};
-    for (const id of Object.keys(onlineUsers)) {
-      statusMap[id] = true;
-    }
-    io.emit("onlineUsers", statusMap);
-  });
+  onlineUsers[userId] = socket.id;
+  console.log(`User ${userId} registered with socket ${socket.id}`);
+
+  // Optionally, update lastOnline immediately when they connect
+  try {
+    await User.findByIdAndUpdate(userId, { lastOnline: new Date() });
+  } catch (err) {
+    console.error("Error updating lastOnline on register:", err);
+  }
+
+  // Emit a simplified map: userId -> true
+  const statusMap = {};
+  for (const id of Object.keys(onlineUsers)) {
+    statusMap[id] = true;
+  }
+  io.emit("onlineUsers", statusMap);
+});
+
 
   socket.on("directMessage", async ({ senderId, receiverId, text }) => {
     try {

@@ -8,7 +8,7 @@ import { ArrowLeft, Loader, Send } from "lucide-react";
 export default function Chat() {
   const { id: otherUserId } = useParams();
   const token = localStorage.getItem("token");
-  const me = JSON.parse(localStorage.getItem("user") || "{}");
+  const me = JSON.parse(localStorage.getItem("user") || "null");
   const [other, setOther] = useState(null);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
@@ -23,7 +23,7 @@ export default function Chat() {
 
   const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
 
-  const myId = me?.id;
+  const myId = me?._id || me?.id 
 
   // Helper: Convert date to "time ago"
   function timeAgo(date) {

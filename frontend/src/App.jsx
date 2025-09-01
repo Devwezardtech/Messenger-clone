@@ -6,6 +6,7 @@ import Users from "./users/user";
 import Chat from "./users/Chat";
 import Menu from "./users/Menu";
 import SwitchAccount from "./users/SwitchAccount";
+import Setting from "./users/page/settings/setting";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -29,6 +30,7 @@ function App() {
       <Route path="/" element={token ? <Navigate to="/users" /> : <Navigate to="/login" />} />
       <Route path="/users/menu" element={ <Menu />} />
       <Route path="/switch" element={ <SwitchAccount />} />
+      <Route path="/setting" element={ <Setting />} />
     </Routes>
   );
 }
