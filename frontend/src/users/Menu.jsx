@@ -42,6 +42,9 @@ const goTOSettings = () => {
   navigate("/setting");
 }
 
+const toBack = () => {
+  navigate("/users")
+}
 
 
   if (!user) {
@@ -65,7 +68,7 @@ const goTOSettings = () => {
         <div className="flex items-center bg-gray-100">
           <button
             className="text-gray-700 hover:text-black"
-            onClick={()=>{navigate(-1)}}
+            onClick={toBack}
           >
             <ArrowLeft className="w-6 h-6 text-gray-700" />
           </button>
