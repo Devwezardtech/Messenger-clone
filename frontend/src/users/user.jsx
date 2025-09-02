@@ -19,13 +19,15 @@ export default function Users() {
   const [noMessage, setNoMessage] = useState("Say hi!");
   const [loading, setLoading] = useState(true)
 
+  const myId = me?._id || me?.id;
+
   // Connect to socket and get online users list
   useEffect(() => {
     const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000" // url for mentain code
     socketRef.current = io(SOCKET_URL);
 
     socketRef.current.on("connect", () => {
-      socketRef.current.emit("register", me.id);
+      socketRef.current.emit("register", myId);
     });
 
     socketRef.current.on("onlineUsers", (onlineList) => {
@@ -35,7 +37,7 @@ export default function Users() {
     socketRef.current.on("receiveMessage", (msg) => {
   setLastMessages((prev) => ({
     ...prev,
-    [msg.senderId === me.id ? msg.receiverId : msg.senderId]: msg,
+    [msg.senderId === myId ? msg.receiverId : msg.senderId]: msg,
   }));
 });
 
@@ -50,7 +52,7 @@ socketRef.current.on("messageSaved", (msg) => {
     return () => {
       socketRef.current.disconnect();
     };
-  }, [me.id]);
+  }, [myId]);
 
   // Fetch users & last messages
   useEffect(() => {
@@ -61,7 +63,7 @@ socketRef.current.on("messageSaved", (msg) => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const filtered = res.data.filter((u) => u._id !== me.id);
+        const filtered = res.data.filter((u) => u._id !== myId);
         setUsers(filtered);
 
         const msgsMap = {};
@@ -90,11 +92,11 @@ setLastMessages(msgsMap);
       }
     };
     fetchUsersAndLast();
-  }, [token, me.id]);
+  }, [token, myId]);
 
 const isUnread = (uId) => {
   const last = lastMessages[uId] || {};
-  return last.receiverId === me.id && last.senderId === uId && !last.seen;
+  return last.receiverId === myId && last.senderId === uId && !last.seen;
 };
 
 
@@ -113,7 +115,7 @@ const isUnread = (uId) => {
   };
 
   const handleOpenChat = async (uId, last) => {
-  if (last && last.senderId !== me.id && !last.seen) {
+  if (last && last.senderId !== myId && !last.seen) {
     const updatedLast = { ...last, seen: true };
     setLastMessages((prev) => ({
       ...prev,
