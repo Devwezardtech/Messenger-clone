@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../components/api";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 export default function Setting() {
   const [user, setUser] = useState(null);
@@ -54,11 +55,23 @@ export default function Setting() {
     }
   };
 
+  const toBack = () => {
+    navigate("/users/menu")
+  }
+
   if (!user) return <div className="p-4">Loading...</div>;
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-xl font-semibold mb-4">Settings</h2>
+    <div className=" px-6 py-6 pb-6 max-w-md mx-auto">
+      <div className="flex gap-4 mb-4">
+        <button
+          onClick={toBack}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+      <h2 className="lg:text-xl font-semibold">Settings</h2>
+      </div>
 
       <form onSubmit={updateProfile} className="flex flex-col gap-4">
         {/* Avatar preview */}
